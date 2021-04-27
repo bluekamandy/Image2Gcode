@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream> // Read/write files
 #include <string>
-#include "config.h"
+#include <config.h>
 
 #define LOG(msg) \
     std::cout << msg << std::endl

@@ -1,21 +1,33 @@
-#include <cmath>
+/*
+ * IMAGE to GCODE
+ *
+ * by MASOOD
+ * 
+ * Initiated: 4/27/2021
+ * Last updated: 4/28/2021
+ * 
+ * */
+
 #include <cstdlib>
 #include <iostream>
 #include <fstream> // Read/write files
 #include <string>
 #include <config.h>
+#include <opencv2/opencv.hpp>
 
 #define LOG(msg) \
     std::cout << msg << std::endl
 
-int main(int argc, char *argv[])
+using namespace cv;
+
+int main()
 {
-    if (argc < 2)
-    {
-        LOG("hello world");
-        std::cout << argv[0] << " Version " << IMGTOGCODE_VERSION_MAJOR << "." << IMGTOGCODE_VERSION_MINOR << '\n';
-        return 1;
-    }
+
+    Mat image;
+    image = imread("../resources/mandrill.jpg");
+    namedWindow("Display Image", WINDOW_AUTOSIZE);
+    imshow("Display Image", image);
+    waitKey(0);
 
     return 0;
 }

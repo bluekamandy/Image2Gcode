@@ -10,22 +10,38 @@ set(OpenCV_DIR external/opencv/build)
 
 find_package(OpenCV REQUIRED)
 
-# add the executable
-add_executable(${PROJECT_NAME} main.cpp)
+# add the executable and include any header files you'd like to include.
+add_executable(${PROJECT_NAME} main.cpp slicer.cpp  mesh.cpp slicer.hpp mesh.hpp)
 
-# This file will define the following variables:
-#      - OpenCV_LIBS                     : The list of all imported targets for OpenCV modules.
-#      - OpenCV_INCLUDE_DIRS             : The OpenCV include directories.
-
-target_include_directories(${PROJECT_NAME}
+target_include_directories(${PROJECT_NAME}             
         PRIVATE
         ${PROJECT_BINARY_DIR}
-        ${OpenCV_INCLUDE_DIRS})
+        ${OpenCV_INCLUDE_DIRS}
+)
 
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
-        ${OpenCV_LIBS})
+        ${OpenCV_LIBS}
+)
 
 # message("OpenCV Include Directories: " ${OpenCV_INCLUDE_DIRS})
 # message("OpenCV Libraries: " ${OpenCV_LIBS})
+
+add_subdirectory(external/glm)
+
+target_include_directories(${PROJECT_NAME}
+        PUBLIC
+        ${PROJECT_BINARY_DIR}
+        external/glm/glm 
+)
+
+target_link_directories(${PROJECT_NAME}
+	PRIVATE
+        external/glm/glm
+)
+
+target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        glm::glm
+)
 

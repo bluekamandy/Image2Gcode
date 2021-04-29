@@ -14,14 +14,20 @@
 #include <string>
 #include <config.h>
 #include <opencv2/opencv.hpp>
+#include <glm/vec2.hpp>
+
+#include "slicer.hpp"
 
 #define LOG(msg) \
     std::cout << msg << std::endl
 
 using namespace cv;
 
+Slicer slicer;
+
 int main()
 {
+    slicer.test();
 
     Mat image;
     image = imread("../resources/mandrill.jpg");

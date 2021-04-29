@@ -139,8 +139,10 @@ void Slicer::apply()
     int layerNum = 0;
     int hairNum = 0;
 
+    for (int i = 0; i < mesh.layers.size(); i++)
+    {
+    }
     /*
-    for (int i = 0; i < i in range(0, len(MeshPoints.Paths)):
         pList = MeshPoints.Branch(i)
         
         if(len(pList) != 0):
@@ -152,7 +154,7 @@ void Slicer::apply()
             j = 0
             for j in range(0,len(pList)):
                 if(j == 0):
-                    #sb.Append("G4 P100\n");
+#sb.Append("G4 P100\n");
                     sb.append(makeGcode(pList[j]))
                     continue
 
@@ -172,15 +174,13 @@ void Slicer::apply()
 
 
     sb.append(makeRetraction(_RetAmount, _RetSpeed, -1));
-    CurrentHeight += 10;
-    sb.append("G1 Z" + "{:.{}f}".format(CurrentHeight,3) + "\n");
+        CurrentHeight += 10;
+        sb.append("G1 Z" + "{:.{}f}".format(CurrentHeight, 3) + "\n");
 
+        sb.append("M84");
+        strsb = ''.join(sb)
+                    WriteFile(strsb, FilePath);
 
-    sb.append("M84");
-    strsb = ''.join(sb)
-    WriteFile(strsb, FilePath);  
-        
-        
-    a = strsb
-    */
+        a = strsb * /
+        */
 }

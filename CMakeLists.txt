@@ -11,7 +11,7 @@ set(OpenCV_DIR external/opencv/build)
 find_package(OpenCV REQUIRED)
 
 # add the executable and include any header files you'd like to include.
-add_executable(${PROJECT_NAME} main.cpp slicer.cpp  mesh.cpp slicer.hpp mesh.hpp)
+add_executable(${PROJECT_NAME} main.cpp slicer.cpp  mesh.cpp layer.cpp slicer.hpp mesh.hpp layer.hpp)
 
 target_include_directories(${PROJECT_NAME}             
         PRIVATE

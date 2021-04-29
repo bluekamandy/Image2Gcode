@@ -39,7 +39,7 @@ public:
     // Any public data/members your class will need should be declared here.
     std::string output;
 
-    //Mesh mesh;
+    Mesh mesh;
 
     int bedTemp;
     int nozzleTemp;

@@ -42,7 +42,7 @@ int main()
 
     Mat_<Vec3b> image;
 
-    image = imread("../resources/mandrill.jpg");
+    image = imread("../resources/cameraman.jpg");
 
     int mids = 90; // default is 128.0
 

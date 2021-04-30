@@ -4,8 +4,8 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
-#ifndef _NAMEOFCLASS_H_
-#define _NAMEOFCLASS_H_
+#ifndef _MESH_H_
+#define _MESH_H_
 
 class Mesh
 {

@@ -14,6 +14,7 @@
 #pragma once
 
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <vector>
 #include <ctime>
@@ -25,6 +26,10 @@
 #include <glm/geometric.hpp>
 
 #include "mesh.hpp"
+#include "layer.hpp"
+
+#define LOG(msg) \
+    std::cout << msg << std::endl
 
 #ifndef _SLICER_H_
 #define _SLICER_H_
@@ -40,6 +45,7 @@ public:
     std::string output;
 
     Mesh mesh;
+    std::vector<Layer> layers;
 
     int bedTemp;
     int nozzleTemp;

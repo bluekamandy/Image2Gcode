@@ -139,9 +139,56 @@ void Slicer::apply()
     int layerNum = 0;
     int hairNum = 0;
 
-    for (int i = 0; i < mesh.layers.size(); i++)
+    for (int i = 0; i < layers.size(); i++)
     {
+        std::vector<glm::vec3> pointList = layers[i].points;
+
+        if (pointList.size() != 0)
+        {
+            currentHeight = pointList[0].z;
+            stringBuffer.push_back("G1 F300 Z" + std::to_string(currentHeight) + "\n");
+            stringBuffer.push_back(makeGcode(pointList[0]));
+            stringBuffer.push_back(makeRetraction(retAmount, retSpeed, 1));
+
+            for (int j = 0; j < pointList.size(); j++)
+            {
+                if (j == 0)
+                {
+                    stringBuffer.push_back(makeGcode(pointList[j]));
+                    continue;
+                }
+                LOG(layerHeight);
+
+                if (pointList[j].z > currentHeight + (layerHeight / 10))
+                {
+                    currentHeight = pointList[j].z;
+
+                    // Not sure if this is going to work
+                    // I'll need to verify.
+
+                    std::setprecision(3);
+                    std::string currentHeight_fmt = std::to_string(currentHeight);
+
+                    stringBuffer.push_back("G1 F300 Z" + currentHeight_fmt + "\n");
+                }
+
+                stringBuffer.push_back(makeGcodeSpeed(pointList[j - 1], pointList[j], printSpeed));
+            }
+
+            stringBuffer.push_back(makeRetraction(retAmount, retSpeed, -1));
+        }
     }
+
+    stringBuffer.push_back(makeRetraction(retAmount, retSpeed, -1));
+    currentHeight += 10;
+
+    std::setprecision(3);
+    std::string currentHeight_fmt = std::to_string(currentHeight);
+
+    stringBuffer.push_back("G1 Z" + currentHeight_fmt + "\n");
+
+    stringBuffer.push_back("M84");
+
     /*
         pList = MeshPoints.Branch(i)
         

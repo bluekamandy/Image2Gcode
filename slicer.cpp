@@ -189,45 +189,6 @@ void Slicer::apply()
 
     stringBuffer.push_back("M84");
 
-    /*
-        pList = MeshPoints.Branch(i)
-        
-        if(len(pList) != 0):
-            CurrentHeight = pList[0].Z
-            sb.append("G1 F300 Z" + str(CurrentHeight) + "\n")
-            sb.append(makeGcode(pList[0]))
-            sb.append(makeRetraction(_RetAmount, _RetSpeed, 1))
-    
-            j = 0
-            for j in range(0,len(pList)):
-                if(j == 0):
-#sb.Append("G4 P100\n");
-                    sb.append(makeGcode(pList[j]))
-                    continue
+    std::string stringBufferJoined = join(stringBuffer);
 
-                print(LayerHeight)
-                if(pList[j].Z > CurrentHeight + (_LayerHeight / 10)):
-                    CurrentHeight = pList[j].Z
-                    sb.append("G1 F300 Z" + "{:.{}f}".format(CurrentHeight,3) + "\n")
-
-                sb.append(makeGcodeSpeed(pList[j - 1], pList[j], PrintSpeed))
-
-            sb.append(makeGcodeSpeed(pList[len(pList) - 1], pList[0], PrintSpeed))
-
-        sb.append(makeRetraction(_RetAmount, _RetSpeed, -1))
-
-
-
-
-
-    sb.append(makeRetraction(_RetAmount, _RetSpeed, -1));
-        CurrentHeight += 10;
-        sb.append("G1 Z" + "{:.{}f}".format(CurrentHeight, 3) + "\n");
-
-        sb.append("M84");
-        strsb = ''.join(sb)
-                    WriteFile(strsb, FilePath);
-
-        a = strsb * /
-        */
-}
+    writeFile(stringBufferJoined, filePath);

@@ -25,6 +25,7 @@
 
 #include <glm/geometric.hpp>
 
+#include "common.hpp"
 #include "mesh.hpp"
 #include "layer.hpp"
 
@@ -43,6 +44,7 @@ public:
 
     // Any public data/members your class will need should be declared here.
     std::string output;
+    std::string filePath;
 
     Mesh mesh;
     std::vector<Layer> layers;

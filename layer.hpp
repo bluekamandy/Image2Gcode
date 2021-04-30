@@ -9,8 +9,9 @@
 struct Layer
 {
 
+    std::vector<glm::vec2> points;
+
     Layer();
-    //std::vector <);
 };
 
 #endif

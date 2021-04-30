@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.20)
 
 project(IMGtoGCODE VERSION 1.0)
 
+# Enforce use of C++14
+set(CMAKE_CXX_STANDARD_REQUIRED 20)
+set(CMAKE_CXX_STANDARD 20)
+
 # configure a header file to pass some of the CMake settings
 # to the source code
 configure_file(config.h.in config.h)

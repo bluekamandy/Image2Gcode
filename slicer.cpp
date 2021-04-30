@@ -192,3 +192,4 @@ void Slicer::apply()
     std::string stringBufferJoined = join(stringBuffer);
 
     writeFile(stringBufferJoined, filePath);
+}

@@ -16,8 +16,12 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc.hpp>
 #include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/ext.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include "slicer.hpp"
+#include "layer.hpp"
 
 #define LOG(msg) \
     std::cout << msg << std::endl
@@ -25,16 +29,6 @@
 using namespace cv;
 
 Slicer slicer;
-
-cv::Mat DoubleMatFromVec3b(cv::Vec3b in)
-{
-    cv::Mat mat(3, 1, CV_64FC1);
-    mat.at<double>(0, 0) = in[0];
-    mat.at<double>(1, 0) = in[1];
-    mat.at<double>(2, 0) = in[2];
-
-    return mat;
-};
 
 int main()
 {
@@ -86,7 +80,88 @@ int main()
 
     resize(image, scaledDown, Size_<int>(detail, detail), 0, 0, INTER_LINEAR);
 
+    //--
     // Sample each pixel from the scaled down image and place them in 2D space using the layer
+    //--
+
+    //--
+    // DRAW SQUARE
+    //--
+
+    // CENTER BUILD AREA
+    // Build area for this will be pixels/2
+    // Since images are 256x256, our image will be 128x128
+
+    // To center we need to go to the origin of the print and make all points relative to that.
+
+    // printOrigin.x = (bedWidth - printWidth) / 2;
+    // printOrigin.y = (bedHeight - printHeight) / 2;
+
+    // Since our bedWidth and bedHeight both == 220mm
+    // and our printWidth and Height both == 128mm
+    // we can say:
+
+    // printOrigin.x = (220 - 128) / 2.0;
+    // printOrigin.y = (220 - 128) / 2.0;
+
+    float bedWidth = 220.0f;
+    float bedHeight = 220.0f;
+    float printWidth = 128.0f;
+    float printHeight = 128.0f;
+
+    glm::vec3 printOrigin(
+        (bedWidth - printWidth) / 2.0f,
+        (bedHeight - printHeight) / 2.0f,
+        0.0f);
+
+    // Set the origin to (printOrigin.x, printOrigin.y)
+
+    // G92 X0 Y0 Z0
+
+    // The square border will be 5 mm thick
+
+    // xmax = maximum print width
+    // ymax = maximum print height
+
+    //0,0
+    //Xmax, 0
+    //Xmax, Ymax
+    //0, ymax
+    //0,1
+
+    //1,1
+    //xmax -1, 1
+    //xmax - 1, ymax - 1
+    //1, ymax-1
+    //1,2
+
+    std::vector<Layer> print;
+
+    Layer firstLayer;
+
+    print.push_back(firstLayer);
+
+    for (int i = 0; i < 5; i++)
+    {
+        LOG("i: " << i);
+        print[0].points.push_back(glm::vec3(i, i, 0));
+        LOG(glm::to_string(print[0].points.back()));
+        print[0].points.push_back(glm::vec3(printWidth - i, i, 0));
+        LOG(glm::to_string(print[0].points.back()));
+        print[0].points.push_back(glm::vec3(printWidth - i, printHeight - i, 0));
+        LOG(glm::to_string(print[0].points.back()));
+        print[0].points.push_back(glm::vec3(i, printHeight - i, 0));
+        LOG(glm::to_string(print[0].points.back()));
+        print[0].points.push_back(glm::vec3(i, i + 1, 0));
+        LOG(glm::to_string(print[0].points.back()));
+    }
+
+    // for (int i = 0; i < print[0].points.size(); i++)
+    // {
+    //     LOG(glm::to_string(print[0].points[i]));
+    // }
+
+    //2,2
 
     resize(scaledDown, image, Size_<int>(width, height), 0, 0, INTER_NEAREST);
 

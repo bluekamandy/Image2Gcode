@@ -9,4 +9,6 @@ std::string join(std::vector<std::string> stringBuffer)
     {
         s += *i;
     }
+
+    return s;
 }

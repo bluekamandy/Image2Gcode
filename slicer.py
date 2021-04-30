@@ -2,8 +2,7 @@
     Inputs:
         x: The x script variable
         y: The y script variable
-    Output:
-        a: The a output variable"""
+           a: The a output variable"""
 
 __author__ = "jenniferjacobs"
 

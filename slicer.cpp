@@ -1,18 +1,18 @@
 #include "slicer.hpp"
 
 // Constructors
-Slicer::Slicer()
+Slicer::Slicer() : bedWidth(220.0f), bedDepth(220.0f), maxHeight(250.0f), layerHeight(0.2f), bedTemp(80.0f), nozzleTemp(200.0f)
 {
 }
 
-Slicer::Slicer(float layerHeight, int bedTemp, int nozzleTemp) : layerHeight(layerHeight), bedTemp(bedTemp), nozzleTemp(nozzleTemp)
+Slicer::Slicer(float bedWidth, float bedDepth, float maxHeight, float layerHeight, int bedTemp, int nozzleTemp) : bedWidth(bedWidth), bedDepth(bedDepth), maxHeight(maxHeight), layerHeight(layerHeight), bedTemp(bedTemp), nozzleTemp(nozzleTemp)
 {
 }
 
 // Public Methods
 void Slicer::test()
 {
-    std::ofstream myFile("outputTest.txt");
+    std::ofstream myFile("../output/outputTest.txt");
 
     myFile << "Files can be tricky, but it is fun enough!";
 
@@ -52,13 +52,6 @@ void Slicer::makeGcodeStartupSettings(std::vector<std::string> &strBuff)
     strBuff.push_back("G1 X50 E8 F800\n");
 }
 
-void Slicer::writeFile(std::string str, std::string path)
-{
-    std::ofstream myFile(path + "output.txt");
-    myFile << str;
-    myFile.close();
-}
-
 std::string Slicer::makeRetraction(float amount, float speed, int sign)
 {
     std::string message = "";
@@ -71,7 +64,26 @@ std::string Slicer::makeRetraction(float amount, float speed, int sign)
         message = " ; Extraction";
     }
 
+    std::stringstream stream;
+
+    // Convert all precision changes to stringstreams.
+
     return "G1 F" + std::to_string(speed) + " E" + std::to_string(sign * amount) + message + "\n";
+}
+
+std::string Slicer::centerPrint(float printWidth, float printDepth)
+{
+    glm::vec2 printOrigin;
+    printOrigin.x = (bedWidth - printWidth) / 2;
+    printOrigin.y = (bedDepth - printDepth) / 2;
+
+    std::stringstream result;
+
+    result.precision(2);
+
+    result << std::fixed << "G0 F6000 X" << printOrigin.x << " Y" << printOrigin.y << '\n';
+
+    return result.str();
 }
 
 std::string Slicer::makeGcodePoints(glm::vec2 from, glm::vec2 to)
@@ -123,6 +135,15 @@ std::string Slicer::makeGcode(glm::vec2 to)
     return "G0 F9000 X" + tox_fmt + " Y" + toy_fmt + '\n';
 }
 
+void Slicer::writeFile(std::string str, std::string path)
+{
+    LOG("Writing to file: "
+        << "output.txt");
+    std::ofstream myFile("output.txt");
+    myFile << str;
+    myFile.close();
+}
+
 void Slicer::apply()
 {
     std::vector<std::string> stringBuffer;
@@ -131,6 +152,7 @@ void Slicer::apply()
     makeGcodeHeatSettings(stringBuffer);
     makeGcodeStartupSettings(stringBuffer);
     stringBuffer.push_back(makeRetraction(retAmount, retSpeed, -1));
+    stringBuffer.push_back(centerPrint(128.0f, 128.0f));
 
     float currentHeight = 0;
 
@@ -190,6 +212,8 @@ void Slicer::apply()
     stringBuffer.push_back("M84");
 
     std::string stringBufferJoined = join(stringBuffer);
+
+    LOG(stringBufferJoined);
 
     writeFile(stringBufferJoined, filePath);
 }

@@ -3,11 +3,11 @@
  *
  * by MASOOD
  * adapted from Python code by Jennifer Jacobs
- * for her Computational Fabrication course at
- * UCSB's Media Arts & Technology course.
+ * for her Computational Fabrication course in
+ * UCSB's Media Arts & Technology department..
  * 
  * Initiated: 4/27/2021
- * Last updated: 4/28/2021
+ * Last updated: 4/30/2021
  * 
  * */
 
@@ -16,6 +16,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <ctime>
 #include <iomanip>
@@ -40,7 +41,7 @@ class Slicer
 public:
     // Default constructor
     Slicer();
-    Slicer(float layerHeight, int bedTemp, int nozzleTemp);
+    Slicer(float bedWidth, float bedDepth, float maxHeight, float layerHeight, int bedTemp, int nozzleTemp);
 
     // Any public data/members your class will need should be declared here.
     std::string output;
@@ -48,6 +49,10 @@ public:
 
     Mesh mesh;
     std::vector<Layer> layers;
+
+    float bedWidth;
+    float bedDepth;
+    float maxHeight;
 
     int bedTemp;
     int nozzleTemp;
@@ -71,6 +76,7 @@ private:
     void writeFile(std::string str, std::string path);
 
     std::string makeRetraction(float amount, float speed, int sign);
+    std::string centerPrint(float printWidth, float);
     std::string makeGcodePoints(glm::vec2 from, glm::vec2 to);
     std::string makeGcodeSpeed(glm::vec2 from, glm::vec2 to, float speed);
     std::string makeGcode(glm::vec2 to);

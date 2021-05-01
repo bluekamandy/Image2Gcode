@@ -12,6 +12,7 @@
 #include <iostream>
 #include <fstream> // Read/write files
 #include <string>
+#include <sstream>
 #include <config.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc.hpp>
@@ -28,11 +29,10 @@
 
 using namespace cv;
 
-Slicer slicer;
-
 int main()
 {
-    slicer.test();
+
+    Slicer slicer(200.0f, 200.0f, 250.0f, 0.2f, 80.0f, 200.0f);
 
     Mat_<Vec3b> image;
 
@@ -155,6 +155,10 @@ int main()
         print[0].points.push_back(glm::vec3(i, i + 1, 0));
         LOG(glm::to_string(print[0].points.back()));
     }
+
+    slicer.layers = print;
+    slicer.filePath = "output/";
+    slicer.apply();
 
     // for (int i = 0; i < print[0].points.size(); i++)
     // {

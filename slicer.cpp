@@ -48,8 +48,13 @@ void Slicer::makeGcodeStartupSettings(std::vector<std::string> &strBuff)
     strBuff.push_back("G28\n");
     strBuff.push_back("M83\n");
     strBuff.push_back("G90\n");
-    strBuff.push_back("G1 F300 Z0.4\n");
-    strBuff.push_back("G1 X50 E8 F800\n");
+    std::stringstream zOffsetStream;
+    zOffsetStream.precision(2);
+    zOffsetStream << std::fixed << "G1 F300 Z" << zOffset << " ; set Z-offset\n";
+    strBuff.push_back(zOffsetStream.str());
+    // strBuff.push_back("G1 X50 E8 F800\n");
+    strBuff.push_back(makeGcodePoints(glm::vec2(10, 10), glm::vec2(bedWidth - 10, 10)));
+    strBuff.push_back(makeGcodePoints(glm::vec2(bedWidth - 10, 11), glm::vec2(10, 11)));
 }
 
 std::string Slicer::makeRetraction(float amount, float speed, int sign)
@@ -64,24 +69,25 @@ std::string Slicer::makeRetraction(float amount, float speed, int sign)
         message = " ; Extraction";
     }
 
-    std::stringstream stream;
+    std::stringstream result;
 
-    // Convert all precision changes to stringstreams.
+    result << std::fixed << "G1 F" << std::setprecision(0) << speed << " E" << std::setprecision(8) << sign * amount << message << "\n";
 
-    return "G1 F" + std::to_string(speed) + " E" + std::to_string(sign * amount) + message + "\n";
+    return result.str();
 }
 
 std::string Slicer::centerPrint(float printWidth, float printDepth)
 {
     glm::vec2 printOrigin;
-    printOrigin.x = (bedWidth - printWidth) / 2;
-    printOrigin.y = (bedDepth - printDepth) / 2;
+    printOrigin.x = (bedWidth - printWidth) / 2.0f;
+    printOrigin.y = (bedDepth - printDepth) / 2.0f;
 
     std::stringstream result;
 
     result.precision(2);
 
-    result << std::fixed << "G0 F6000 X" << printOrigin.x << " Y" << printOrigin.y << '\n';
+    result << std::fixed << "G0 F6000 X" << printOrigin.x << " Y" << printOrigin.y << " ; Move to print origin" << '\n'
+           << "G92 X0.00 Y0.00 Z0.00 ; Set this point to 0,0,0 in coordinate space\n";
 
     return result.str();
 }
@@ -93,17 +99,13 @@ std::string Slicer::makeGcodePoints(glm::vec2 from, glm::vec2 to)
     float denominator = (1.75 / 2) * (1.75 / 2) * M_PI;
     float e = numerator / denominator;
 
-    // Not sure if this is going to work
-    // I'll need to verify.
+    e *= extScalar;
 
-    std::setprecision(2);
-    std::string tox_fmt = std::to_string(to.x);
-    std::string toy_fmt = std::to_string(to.y);
+    std::stringstream result;
 
-    std::setprecision(8);
-    std::string e_fmt = std::to_string(e);
+    result << std::fixed << "G1 F1200 X" << std::setprecision(2) << to.x << " Y" << to.y << " E" << std::setprecision(8) << e << '\n';
 
-    return "G1 F1200 X" + tox_fmt + " Y" + toy_fmt + " E" + e_fmt + '\n';
+    return result.str();
 }
 
 std::string Slicer::makeGcodeSpeed(glm::vec2 from, glm::vec2 to, float speed)
@@ -113,26 +115,51 @@ std::string Slicer::makeGcodeSpeed(glm::vec2 from, glm::vec2 to, float speed)
     float denominator = (1.75 / 2) * (1.75 / 2) * M_PI;
     float e = numerator / denominator;
 
-    // Not sure if this is going to work
-    // I'll need to verify.
+    std::stringstream result;
 
-    std::setprecision(2);
-    std::string tox_fmt = std::to_string(to.x);
-    std::string toy_fmt = std::to_string(to.y);
+    result << std::fixed << "G1 F" << std::setprecision(0) << speed << " X" << std::setprecision(2) << to.x << " Y" << to.y << " E" << std::setprecision(8) << e << '\n';
 
-    std::setprecision(8);
-    std::string e_fmt = std::to_string(e);
-
-    return "G1 F" + std::to_string(speed) + " X" + tox_fmt + " Y" + toy_fmt + " E" + e_fmt + '\n';
+    return result.str();
 }
 
 std::string Slicer::makeGcode(glm::vec2 to)
 {
-    std::setprecision(2);
-    std::string tox_fmt = std::to_string(to.x);
-    std::string toy_fmt = std::to_string(to.y);
+    std::stringstream result;
 
-    return "G0 F9000 X" + tox_fmt + " Y" + toy_fmt + '\n';
+    result.precision(2);
+
+    result << "G0 F9000 X" << to.x << " Y" << to.y << '\n';
+
+    return result.str();
+}
+
+std::string Slicer::endGcode()
+{
+    std::stringstream stream;
+
+    stream << "M140 S0 ; Set bed temp to 0\n"
+           << "M107 ; Fan off\n"
+           << "G91 ;Relative positioning\n"
+           << "G1 E-2 F2700 ;Retract a bit\n"
+           << "G1 E-2 Z0.2 F2400 ;Retract and raise Z\n"
+           << "G1 X5 Y5 F3000 ;Wipe out\n"
+           << "G1 Z10 ;Raise Z more\n"
+           << '\n'
+           << "G90 ;Absolute positioning\n"
+           << '\n'
+           << "G1 X0 Y220 ;Present print\n"
+           << '\n'
+           << "M106 S0 ;Turn-off fan\n"
+           << "M104 S0 ;Turn-off hotend\n"
+           << "M140 S0 ;Turn-off bed\n"
+           << '\n'
+           << "M84 X Y E ;Disable all steppers but Z\n"
+           << '\n'
+           << "M82 ;absolute extrusion mode\n"
+           << "M104 S0\n"
+           << "; Bye Bye! The End.";
+
+    return stream.str();
 }
 
 void Slicer::writeFile(std::string str, std::string path)
@@ -179,19 +206,19 @@ void Slicer::apply()
                     stringBuffer.push_back(makeGcode(pointList[j]));
                     continue;
                 }
-                LOG(layerHeight);
+                // LOG(layerHeight);
 
                 if (pointList[j].z > currentHeight + (layerHeight / 10))
                 {
                     currentHeight = pointList[j].z;
 
-                    // Not sure if this is going to work
-                    // I'll need to verify.
+                    std::stringstream precisionChange;
 
-                    std::setprecision(3);
-                    std::string currentHeight_fmt = std::to_string(currentHeight);
+                    precisionChange.precision(3);
 
-                    stringBuffer.push_back("G1 F300 Z" + currentHeight_fmt + "\n");
+                    precisionChange << "G1 F300 Z" << currentHeight << "\n";
+
+                    stringBuffer.push_back(precisionChange.str());
                 }
 
                 stringBuffer.push_back(makeGcodeSpeed(pointList[j - 1], pointList[j], printSpeed));
@@ -204,12 +231,17 @@ void Slicer::apply()
     stringBuffer.push_back(makeRetraction(retAmount, retSpeed, -1));
     currentHeight += 10;
 
-    std::setprecision(3);
-    std::string currentHeight_fmt = std::to_string(currentHeight);
+    std::stringstream precisionChange;
 
-    stringBuffer.push_back("G1 Z" + currentHeight_fmt + "\n");
+    precisionChange.precision(3);
 
-    stringBuffer.push_back("M84");
+    precisionChange << "G1 Z" << currentHeight << "\n";
+
+    stringBuffer.push_back(precisionChange.str());
+
+    stringBuffer.push_back(endGcode());
+
+    // END -- Now join string and write it to a file.
 
     std::string stringBufferJoined = join(stringBuffer);
 

@@ -57,12 +57,15 @@ public:
     int bedTemp;
     int nozzleTemp;
 
+    float extScalar = 5.0f;
+    float zOffset = 0.2f;
+
     float layerHeight;
-    float nozzleWidth = 0.4;
-    float retAmount = 6.0;
-    float retSpeed = 1200;
-    float printSpeed = 500;
-    float printSpeedHigh = 1000;
+    float nozzleWidth = 0.4f;
+    float retAmount = 6.0f;
+    float retSpeed = 1200.0f;
+    float printSpeed = 500.0f;
+    float printSpeedHigh = 1000.0f;
 
     // Any methods your class needs go here.
     void apply();
@@ -73,13 +76,14 @@ private:
     void makeGcodeHeatSettings(std::vector<std::string> &strBuff);
     void makeGcodeStartupSettings(std::vector<std::string> &strBuff);
 
-    void writeFile(std::string str, std::string path);
-
     std::string makeRetraction(float amount, float speed, int sign);
     std::string centerPrint(float printWidth, float);
     std::string makeGcodePoints(glm::vec2 from, glm::vec2 to);
     std::string makeGcodeSpeed(glm::vec2 from, glm::vec2 to, float speed);
     std::string makeGcode(glm::vec2 to);
+    std::string endGcode();
+
+    void writeFile(std::string str, std::string path);
 };
 
 #endif

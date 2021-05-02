@@ -11,6 +11,7 @@ struct Layer
 {
 
     std::vector<glm::vec3> points;
+    std::vector<int> layerNo;
 
     Layer();
 };

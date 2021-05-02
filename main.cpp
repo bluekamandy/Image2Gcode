@@ -32,7 +32,7 @@ using namespace cv;
 int main()
 {
 
-    Slicer slicer(200.0f, 200.0f, 250.0f, 0.2f, 80.0f, 200.0f);
+    Slicer slicer(220.0f, 220.0f, 250.0f, 0.2f, 70.0f, 200.0f);
 
     Mat_<Vec3b> image;
 
@@ -141,18 +141,20 @@ int main()
 
     print.push_back(firstLayer);
 
+    float hDistance = 0.5f;
+
     for (int i = 0; i < 5; i++)
     {
         LOG("i: " << i);
-        print[0].points.push_back(glm::vec3(i, i, 0));
+        print[0].points.push_back(glm::vec3(i * hDistance, i * hDistance, 0));
         LOG(glm::to_string(print[0].points.back()));
-        print[0].points.push_back(glm::vec3(printWidth - i, i, 0));
+        print[0].points.push_back(glm::vec3(printWidth - i * hDistance, i * hDistance, 0));
         LOG(glm::to_string(print[0].points.back()));
-        print[0].points.push_back(glm::vec3(printWidth - i, printHeight - i, 0));
+        print[0].points.push_back(glm::vec3(printWidth - i * hDistance, printHeight - i * hDistance, 0));
         LOG(glm::to_string(print[0].points.back()));
-        print[0].points.push_back(glm::vec3(i, printHeight - i, 0));
+        print[0].points.push_back(glm::vec3(i * hDistance, printHeight - i * hDistance, 0));
         LOG(glm::to_string(print[0].points.back()));
-        print[0].points.push_back(glm::vec3(i, i + 1, 0));
+        print[0].points.push_back(glm::vec3(i * hDistance, i * hDistance + hDistance, 0));
         LOG(glm::to_string(print[0].points.back()));
     }
 

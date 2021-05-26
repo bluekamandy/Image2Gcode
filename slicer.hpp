@@ -27,7 +27,7 @@
 #include <glm/geometric.hpp>
 
 #include "common.hpp"
-#include "mesh.hpp"
+#include "print.hpp"
 #include "layer.hpp"
 
 #define LOG(msg) \
@@ -47,7 +47,7 @@ public:
     std::string output;
     std::string filePath;
 
-    Mesh mesh;
+    Print print;
     std::vector<Layer> layers;
 
     float bedWidth;

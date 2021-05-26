@@ -10,12 +10,17 @@ set(CMAKE_CXX_STANDARD 20)
 # to the source code
 configure_file(config.h.in config.h)
 
-set(OpenCV_DIR external/opencv/build)
+set(OpenCV_DIR "$ENV{OPENCV_DIR}")
 
-find_package(OpenCV REQUIRED)
+if(OpenCV_DIR)
+  message(STATUS "GLFW environment variable found")
+  find_package(OpenCV REQUIRED)
+else()
+  message(STATUS "OpenCV environment variable not found")
+endif()
 
 # add the executable and include any header files you'd like to include.
-add_executable(${PROJECT_NAME} main.cpp slicer.cpp  mesh.cpp layer.cpp common.cpp slicer.hpp mesh.hpp layer.hpp common.hpp)
+add_executable(${PROJECT_NAME} main.cpp slicer.cpp  print.cpp layer.cpp common.cpp slicer.hpp print.hpp layer.hpp common.hpp)
 
 target_include_directories(${PROJECT_NAME}             
         PRIVATE

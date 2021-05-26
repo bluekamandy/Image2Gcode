@@ -104,16 +104,6 @@ int main()
     // printOrigin.x = (220 - 128) / 2.0;
     // printOrigin.y = (220 - 128) / 2.0;
 
-    float bedWidth = 220.0f;
-    float bedHeight = 220.0f;
-    float printWidth = 128.0f;
-    float printHeight = 128.0f;
-
-    glm::vec3 printOrigin(
-        (bedWidth - printWidth) / 2.0f,
-        (bedHeight - printHeight) / 2.0f,
-        0.0f);
-
     // Set the origin to (printOrigin.x, printOrigin.y)
 
     // G92 X0 Y0 Z0
@@ -135,32 +125,30 @@ int main()
     //1, ymax-1
     //1,2
 
-    std::vector<Layer> print;
+    Print print;
 
-    Layer firstLayer;
+    // print.push_back(firstLayer);
 
-    print.push_back(firstLayer);
+    // float hDistance = 0.5f;
 
-    float hDistance = 0.5f;
+    // for (int i = 0; i < 5; i++)
+    // {
+    //     LOG("i: " << i);
+    //     print[0].points.push_back(glm::vec3(i * hDistance, i * hDistance, 0));
+    //     LOG(glm::to_string(print[0].points.back()));
+    //     print[0].points.push_back(glm::vec3(printWidth - i * hDistance, i * hDistance, 0));
+    //     LOG(glm::to_string(print[0].points.back()));
+    //     print[0].points.push_back(glm::vec3(printWidth - i * hDistance, printHeight - i * hDistance, 0));
+    //     LOG(glm::to_string(print[0].points.back()));
+    //     print[0].points.push_back(glm::vec3(i * hDistance, printHeight - i * hDistance, 0));
+    //     LOG(glm::to_string(print[0].points.back()));
+    //     print[0].points.push_back(glm::vec3(i * hDistance, i * hDistance + hDistance, 0));
+    //     LOG(glm::to_string(print[0].points.back()));
+    // }
 
-    for (int i = 0; i < 5; i++)
-    {
-        LOG("i: " << i);
-        print[0].points.push_back(glm::vec3(i * hDistance, i * hDistance, 0));
-        LOG(glm::to_string(print[0].points.back()));
-        print[0].points.push_back(glm::vec3(printWidth - i * hDistance, i * hDistance, 0));
-        LOG(glm::to_string(print[0].points.back()));
-        print[0].points.push_back(glm::vec3(printWidth - i * hDistance, printHeight - i * hDistance, 0));
-        LOG(glm::to_string(print[0].points.back()));
-        print[0].points.push_back(glm::vec3(i * hDistance, printHeight - i * hDistance, 0));
-        LOG(glm::to_string(print[0].points.back()));
-        print[0].points.push_back(glm::vec3(i * hDistance, i * hDistance + hDistance, 0));
-        LOG(glm::to_string(print[0].points.back()));
-    }
-
-    slicer.layers = print;
-    slicer.filePath = "output/";
-    slicer.apply();
+    // slicer.layers = print;
+    // slicer.filePath = "output/";
+    // slicer.apply();
 
     // for (int i = 0; i < print[0].points.size(); i++)
     // {

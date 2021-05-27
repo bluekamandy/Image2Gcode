@@ -7,6 +7,9 @@
 #include <opencv2/imgproc.hpp>
 #include "layer.hpp"
 
+#define LOG(msg) \
+    std::cout << msg << std::endl
+
 #ifndef _PRINT_H_
 #define _PRINT_H_
 
@@ -16,7 +19,7 @@ public:
     // Default constructor
     Print();
 
-    Print(std::vector<glm::vec3> points);
+    Print(cv::Mat_<cv::Vec3b> image);
 
     float bedWidth;
     float bedHeight;
@@ -33,9 +36,11 @@ public:
 
     std::vector<Layer> layers;
 
+    void processImage();
+
 private:
     void makeFrameLayer(float width, float height);
-    void processImage();
+    void makeImageLayer();
     void createPoints();
 };
 

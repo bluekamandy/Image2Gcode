@@ -3,9 +3,11 @@
 #include <vector>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc.hpp>
 #include "layer.hpp"
+#include "plasticPoint.hpp"
 
 #define LOG(msg) \
     std::cout << msg << std::endl
@@ -21,17 +23,18 @@ public:
 
     Print(cv::Mat_<cv::Vec3b> image);
 
-    float bedWidth;
-    float bedHeight;
-    float printWidth;
-    float printHeight;
+    double bedWidth;
+    double bedHeight;
+    double printWidth;
+    double printHeight;
 
     glm::vec3 printOrigin;
+    glm::vec3 currentLocation;
 
     cv::Mat_<cv::Vec3b> image;
     std::vector<unsigned int> imageMatrix;
 
-    std::vector<glm::vec3> points;
+    std::vector<PlasticPoint> points;
     std::vector<int> numLayers;
 
     std::vector<Layer> layers;
@@ -40,9 +43,10 @@ public:
 
 private:
     // void makePlatform(unsigned int width, unsigned int height);
-    void makeFrameLayer(unsigned int width, unsigned int height);
+    void calculateFrameWall(double frame_thickness, double frame_width);
+    void makeFrameLayer(double width, double height);
     void makeImageLayer();
-    void createPoints();
+    void createImagePoints();
 };
 
 #endif

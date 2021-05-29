@@ -92,3 +92,30 @@ int main()
 //xmax - 1, ymax - 1
 //1, ymax-1
 //1,2
+
+//  std::vector<Layer> print;
+
+//     Layer firstLayer;
+
+//     print.push_back(firstLayer);
+
+//     float hDistance = 0.5f;
+
+//     for (int i = 0; i < 5; i++)
+//     {
+//         LOG("i: " << i);
+//         print[0].points.push_back(glm::vec3(i * hDistance, i * hDistance, 0));
+//         LOG(glm::to_string(print[0].points.back()));
+//         print[0].points.push_back(glm::vec3(printWidth - i * hDistance, i * hDistance, 0));
+//         LOG(glm::to_string(print[0].points.back()));
+//         print[0].points.push_back(glm::vec3(printWidth - i * hDistance, printHeight - i * hDistance, 0));
+//         LOG(glm::to_string(print[0].points.back()));
+//         print[0].points.push_back(glm::vec3(i * hDistance, printHeight - i * hDistance, 0));
+//         LOG(glm::to_string(print[0].points.back()));
+//         print[0].points.push_back(glm::vec3(i * hDistance, i * hDistance + hDistance, 0));
+//         LOG(glm::to_string(print[0].points.back()));
+//     }
+
+//     slicer.layers = print;
+//     slicer.filePath = "output/";
+//     slicer.apply();

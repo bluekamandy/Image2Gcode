@@ -4,7 +4,7 @@
  * by MASOOD
  * 
  * Initiated: 4/27/2021
- * Last updated: 4/28/2021
+ * Last updated: 5/26/2021
  * 
  * */
 
@@ -31,14 +31,17 @@ using namespace cv;
 
 int main()
 {
-
+    // Slicer(float bedWidth, float bedDepth, float maxHeight, float layerHeight, int bedTemp, int nozzleTemp);
     Slicer slicer(220.0f, 220.0f, 250.0f, 0.2f, 70.0f, 200.0f);
 
-    Mat_<Vec3b> image;
+    Mat image = imread("../resources/cameraman.jpg");
 
-    image = imread("../resources/cameraman.jpg");
+    Mat resized;
 
-    Print print(image);
+    resize(image, resized, cv::Size2i(128, 128), 0.0, 0.0, INTER_NEAREST);
+
+    // Print(cv::Mat_<cv::Vec3b> image);
+    Print print(resized);
 
     print.processImage();
 

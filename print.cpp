@@ -80,13 +80,13 @@ void Print::processImage()
             cv::Mat row = orderedImageData[y];
             if (x < 1)
             {
-                newLayer.newSegment(x, row.at<int>(x));
+                newLayer.newSegment(x, row.at<uchar>(x));
             }
             else
             {
-                if (row.at<int>(x) != row.at<int>(x - 1))
+                if (row.at<uchar>(x) != row.at<uchar>(x - 1))
                 {
-                    newLayer.newSegment(x, row.at<unsigned int>(x));
+                    newLayer.newSegment(x, row.at<uchar>(x));
                 }
             }
         }
@@ -94,8 +94,7 @@ void Print::processImage()
 
         for (int i = 0; i < newLayer.segmentStart.size(); i++)
         {
-            LOG("segmentStart[" << i << "] = " << newLayer.segmentStart[i]);
-            LOG("segmentGray[" << i << "] = " << newLayer.segmentGray[i]);
+            LOG("segmentStart[" << i << "] = " << newLayer.segmentStart[i] << " | segmentGray[" << i << "] = " << newLayer.segmentGray[i]);
         }
     }
 

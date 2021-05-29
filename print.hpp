@@ -39,7 +39,8 @@ public:
     void processImage();
 
 private:
-    void makeFrameLayer(float width, float height);
+    // void makePlatform(unsigned int width, unsigned int height);
+    void makeFrameLayer(unsigned int width, unsigned int height);
     void makeImageLayer();
     void createPoints();
 };

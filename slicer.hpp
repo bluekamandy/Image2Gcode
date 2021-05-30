@@ -21,10 +21,7 @@
 #include <ctime>
 #include <iomanip>
 
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-
-#include <glm/geometric.hpp>
+#include <opencv2/core/matx.hpp>
 
 #include "common.hpp"
 #include "print.hpp"
@@ -78,9 +75,9 @@ private:
 
     std::string makeRetraction(double amount, double speed, int sign);
     std::string centerPrint(double printWidth, double);
-    std::string makeGcodePoints(glm::vec2 from, glm::vec2 to);
-    std::string makeGcodeSpeed(glm::vec2 from, glm::vec2 to, double speed);
-    std::string makeGcode(glm::vec2 to);
+    std::string makeGcodePoints(cv::Point2d from, cv::Point2d to);
+    std::string makeGcodeSpeed(cv::Point2d from, cv::Point2d to, double speed);
+    std::string makeGcode(cv::Point2d to);
     std::string endGcode();
 
     void writeFile(std::string str, std::string path);

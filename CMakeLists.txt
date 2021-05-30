@@ -13,14 +13,14 @@ configure_file(config.h.in config.h)
 set(OpenCV_DIR "$ENV{OPENCV_DIR}")
 
 if(OpenCV_DIR)
-  message(STATUS "GLFW environment variable found")
+  message(STATUS "OpenCV environment variable found")
   find_package(OpenCV REQUIRED)
 else()
   message(STATUS "OpenCV environment variable not found")
 endif()
 
 # add the executable and include any header files you'd like to include.
-add_executable(${PROJECT_NAME} main.cpp slicer.cpp  print.cpp layer.cpp common.cpp slicer.hpp print.hpp layer.hpp common.hpp)
+add_executable(${PROJECT_NAME} main.cpp slicer.cpp print.cpp layer.cpp common.cpp plasticPoint.cpp slicer.hpp print.hpp layer.hpp common.hpp plasticPoint.hpp)
 
 target_include_directories(${PROJECT_NAME}             
         PRIVATE
@@ -36,21 +36,16 @@ target_link_libraries(${PROJECT_NAME}
 # message("OpenCV Include Directories: " ${OpenCV_INCLUDE_DIRS})
 # message("OpenCV Libraries: " ${OpenCV_LIBS})
 
-add_subdirectory(external/glm)
-
 target_include_directories(${PROJECT_NAME}
         PUBLIC
         ${PROJECT_BINARY_DIR}
-        external/glm/glm 
 )
 
 target_link_directories(${PROJECT_NAME}
 	PRIVATE
-        external/glm/glm
 )
 
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
-        glm::glm
 )
 

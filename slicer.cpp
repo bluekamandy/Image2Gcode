@@ -53,8 +53,8 @@ void Slicer::makeGcodeStartupSettings(std::vector<std::string> &strBuff)
     zOffsetStream << std::fixed << "G1 F300 Z" << zOffset << " ; set Z-offset\n";
     strBuff.push_back(zOffsetStream.str());
     // strBuff.push_back("G1 X50 E8 F800\n");
-    strBuff.push_back(makeGcodePoints(glm::vec2(10, 10), glm::vec2(bedWidth - 10, 10)));
-    strBuff.push_back(makeGcodePoints(glm::vec2(bedWidth - 10, 11), glm::vec2(10, 11)));
+    strBuff.push_back(makeGcodePoints(cv::Point2d(10, 10), cv::Point2d(bedWidth - 10, 10)));
+    strBuff.push_back(makeGcodePoints(cv::Point2d(bedWidth - 10, 11), cv::Point2d(10, 11)));
 }
 
 std::string Slicer::makeRetraction(double amount, double speed, int sign)
@@ -78,7 +78,7 @@ std::string Slicer::makeRetraction(double amount, double speed, int sign)
 
 std::string Slicer::centerPrint(double printWidth, double printDepth)
 {
-    glm::vec2 printOrigin;
+    cv::Point2d printOrigin;
     printOrigin.x = (bedWidth - printWidth) / 2.0f;
     printOrigin.y = (bedDepth - printDepth) / 2.0f;
 
@@ -92,9 +92,9 @@ std::string Slicer::centerPrint(double printWidth, double printDepth)
     return result.str();
 }
 
-std::string Slicer::makeGcodePoints(glm::vec2 from, glm::vec2 to)
+std::string Slicer::makeGcodePoints(cv::Point2d from, cv::Point2d to)
 {
-    double length = glm::distance(to, from);
+    double length = distance(to, from);
     double numerator = nozzleWidth * length * layerHeight;
     double denominator = (1.75 / 2) * (1.75 / 2) * M_PI;
     double e = numerator / denominator;
@@ -108,9 +108,9 @@ std::string Slicer::makeGcodePoints(glm::vec2 from, glm::vec2 to)
     return result.str();
 }
 
-std::string Slicer::makeGcodeSpeed(glm::vec2 from, glm::vec2 to, double speed)
+std::string Slicer::makeGcodeSpeed(cv::Point2d from, cv::Point2d to, double speed)
 {
-    double length = glm::distance(to, from);
+    double length = distance(to, from);
     double numerator = nozzleWidth * length * layerHeight;
     double denominator = (1.75 / 2) * (1.75 / 2) * M_PI;
     double e = numerator / denominator;
@@ -122,7 +122,7 @@ std::string Slicer::makeGcodeSpeed(glm::vec2 from, glm::vec2 to, double speed)
     return result.str();
 }
 
-std::string Slicer::makeGcode(glm::vec2 to)
+std::string Slicer::makeGcode(cv::Point2d to)
 {
     std::stringstream result;
 

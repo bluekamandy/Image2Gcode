@@ -1,9 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-#include <glm/gtx/string_cast.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc.hpp>
 #include "layer.hpp"
@@ -28,8 +25,8 @@ public:
     double printWidth;
     double printHeight;
 
-    glm::vec3 printOrigin;
-    glm::vec3 currentLocation;
+    cv::Point3d printOrigin;
+    cv::Point3d currentLocation;
 
     cv::Mat_<cv::Vec3b> image;
     std::vector<unsigned int> imageMatrix;

@@ -6,6 +6,9 @@
  * Initiated: 4/27/2021
  * Last updated: 5/26/2021
  * 
+ * Note: Possible submisison to SCF:
+ * https://scf.acm.org/2021/submissions.html
+ * 
  * */
 
 #include <cstdlib>

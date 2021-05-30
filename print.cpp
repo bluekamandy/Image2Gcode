@@ -2,7 +2,7 @@
 
 Print::Print() : bedWidth(220.0), bedHeight(220.0), printWidth(128.0), printHeight(128.0)
 {
-    printOrigin = glm::vec3(
+    printOrigin = cv::Point3d(
         (bedWidth - printWidth) / 2.0,
         (bedHeight - printHeight) / 2.0,
         0.0);
@@ -25,7 +25,7 @@ void Print::makeFrameLayer(double width, double height)
 
     // Step 2 - Recalibrate print origin by setting currentLocation, which is an offset that the frame wall function takes into consideration.
 
-    currentLocation = printOrigin - glm::vec3(frame_width, frame_width / 2.0, 0.0);
+    currentLocation = printOrigin - cv::Point3d(frame_width, frame_width / 2.0, 0.0);
 
     // Step 3 - Create left square wall.
 
@@ -33,7 +33,7 @@ void Print::makeFrameLayer(double width, double height)
 
     // Step 4 - Move currentLocation to the end of the print and do the other side.
 
-    currentLocation = currentLocation + glm::vec3(frame_width + printWidth, 0.0, 0.0);
+    currentLocation = currentLocation + cv::Point3d(frame_width + printWidth, 0.0, 0.0);
 
     // Step 5 - Create right square wall.
 
@@ -45,24 +45,24 @@ void Print::calculateFrameWall(double frame_thickness, double frame_width)
     double hDistance = 0.5;
     double color = 0.0;
 
-    glm::vec3 distanceFromOrigin = printOrigin - currentLocation;
+    cv::Point3d distanceFromOrigin = printOrigin - currentLocation;
 
     for (int i = 0; i < frame_thickness; i++)
     {
         //LOG("i: " << i);
-        PlasticPoint newPoint(glm::vec3(i * hDistance, i * hDistance, 0.0) + distanceFromOrigin, color);
+        PlasticPoint newPoint(cv::Point3d(i * hDistance, i * hDistance, 0.0) + distanceFromOrigin, color);
         points.push_back(newPoint);
         //LOG(glm::to_string(points.back()));
-        newPoint = PlasticPoint(glm::vec3(frame_width - i * hDistance, i * hDistance, 0.0) + distanceFromOrigin, color);
+        newPoint = PlasticPoint(cv::Point3d(frame_width - i * hDistance, i * hDistance, 0.0) + distanceFromOrigin, color);
         points.push_back(newPoint);
         //LOG(glm::to_string(points.back()));
-        newPoint = PlasticPoint(glm::vec3(frame_width - i * hDistance, frame_width - i * hDistance, 0.0) + distanceFromOrigin, color);
+        newPoint = PlasticPoint(cv::Point3d(frame_width - i * hDistance, frame_width - i * hDistance, 0.0) + distanceFromOrigin, color);
         points.push_back(newPoint);
         //LOG(glm::to_string(points.back()));
-        newPoint = PlasticPoint(glm::vec3(i * hDistance, frame_width - i * hDistance, 0.0) + distanceFromOrigin, color);
+        newPoint = PlasticPoint(cv::Point3d(i * hDistance, frame_width - i * hDistance, 0.0) + distanceFromOrigin, color);
         points.push_back(newPoint);
         //LOG(glm::to_string(points.back()));
-        newPoint = PlasticPoint(glm::vec3(i * hDistance, i * hDistance + hDistance, 0.0) + distanceFromOrigin, color);
+        newPoint = PlasticPoint(cv::Point3d(i * hDistance, i * hDistance + hDistance, 0.0) + distanceFromOrigin, color);
         points.push_back(newPoint);
         //LOG(glm::to_string(points.back()));
     }
@@ -193,7 +193,7 @@ void Print::createImagePoints()
     {
         for (int j = 0; j < layers[i].segmentStart.size(); j++)
         {
-            PlasticPoint newPoint(glm::vec3(layers[i].segmentStart[j], 0.0, 0.0), layers[i].segmentGray[j]);
+            PlasticPoint newPoint(cv::Point3d(layers[i].segmentStart[j], 0.0, 0.0), layers[i].segmentGray[j]);
             points.push_back(newPoint);
         }
     }

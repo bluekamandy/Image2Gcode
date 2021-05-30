@@ -2,10 +2,9 @@
 
 Print::Print() : bedWidth(220.0), bedHeight(220.0), printWidth(128.0), printHeight(128.0)
 {
-    printOrigin = cv::Point3d(
+    printOrigin = cv::Point2d(
         (bedWidth - printWidth) / 2.0,
-        (bedHeight - printHeight) / 2.0,
-        0.0);
+        (bedHeight - printHeight) / 2.0);
 };
 
 Print::Print(cv::Mat_<cv::Vec3b> image) : image(image)
@@ -16,57 +15,7 @@ Print::Print(cv::Mat_<cv::Vec3b> image) : image(image)
 
 // PRIVATE
 
-void Print::makeFrameLayer(double width, double height)
-{
-    double frame_thickness = 5.0;
-    double frame_width = 10.0;
-
-    // Step 1 - Move to 0,0, which is going to be the lower left hand corner of the left frame wall.
-
-    // Step 2 - Recalibrate print origin by setting currentLocation, which is an offset that the frame wall function takes into consideration.
-
-    currentLocation = printOrigin - cv::Point3d(frame_width, frame_width / 2.0, 0.0);
-
-    // Step 3 - Create left square wall.
-
-    calculateFrameWall(frame_thickness, frame_width);
-
-    // Step 4 - Move currentLocation to the end of the print and do the other side.
-
-    currentLocation = currentLocation + cv::Point3d(frame_width + printWidth, 0.0, 0.0);
-
-    // Step 5 - Create right square wall.
-
-    calculateFrameWall(frame_thickness, frame_width);
-}
-
-void Print::calculateFrameWall(double frame_thickness, double frame_width)
-{
-    double hDistance = 0.5;
-    double color = 0.0;
-
-    cv::Point3d distanceFromOrigin = printOrigin - currentLocation;
-
-    for (int i = 0; i < frame_thickness; i++)
-    {
-        //LOG("i: " << i);
-        PlasticPoint newPoint(cv::Point3d(i * hDistance, i * hDistance, 0.0) + distanceFromOrigin, color);
-        points.push_back(newPoint);
-        //LOG(glm::to_string(points.back()));
-        newPoint = PlasticPoint(cv::Point3d(frame_width - i * hDistance, i * hDistance, 0.0) + distanceFromOrigin, color);
-        points.push_back(newPoint);
-        //LOG(glm::to_string(points.back()));
-        newPoint = PlasticPoint(cv::Point3d(frame_width - i * hDistance, frame_width - i * hDistance, 0.0) + distanceFromOrigin, color);
-        points.push_back(newPoint);
-        //LOG(glm::to_string(points.back()));
-        newPoint = PlasticPoint(cv::Point3d(i * hDistance, frame_width - i * hDistance, 0.0) + distanceFromOrigin, color);
-        points.push_back(newPoint);
-        //LOG(glm::to_string(points.back()));
-        newPoint = PlasticPoint(cv::Point3d(i * hDistance, i * hDistance + hDistance, 0.0) + distanceFromOrigin, color);
-        points.push_back(newPoint);
-        //LOG(glm::to_string(points.back()));
-    }
-}
+// STEP 1: Process the image into a layer object with all of the values encoded and ordered properly.
 
 void Print::processImage()
 {
@@ -183,18 +132,76 @@ void Print::processImage()
     */
 }
 
-void Print::createImagePoints()
+// STEP 2: Turn that processed image into a series of ordered points along with extrusion values.
+
+void Print::makePoints(double width, double height)
+{
+    for (int i = 0; i < layers.size(); i++)
+    {
+        double frame_thickness = 5.0;
+        double frame_width = 10.0;
+
+        // Step 1 - Move to 0,0, which is going to be the lower left hand corner of the left frame wall.
+
+        // Step 2 - Recalibrate print origin by setting currentLocation, which is an offset that the frame wall function takes into consideration.
+
+        currentLocation = printOrigin - cv::Point2d(frame_width, frame_width / 2.0);
+
+        // Step 3 - Create left square wall.
+
+        calculateFrameWall(frame_thickness, frame_width);
+
+        // Step 4 - Draw Image layer
+
+        createImagePoints(i);
+
+        // Step 5 - Move currentLocation to the end of the print and do the other side.
+
+        currentLocation = currentLocation + cv::Point2d(frame_width + printWidth, 0.0);
+
+        // Step 6 - Create right square wall.
+
+        calculateFrameWall(frame_thickness, frame_width);
+    }
+}
+
+void Print::calculateFrameWall(double frame_thickness, double frame_width)
+{
+    double hDistance = 0.5;
+    double color = 0.0;
+
+    cv::Point2d distanceFromOrigin = printOrigin - currentLocation;
+
+    for (int i = 0; i < frame_thickness; i++)
+    {
+        //LOG("i: " << i);
+        PlasticPoint newPoint(cv::Point2d(i * hDistance, i * hDistance) + distanceFromOrigin, color);
+        points.push_back(newPoint);
+        //LOG(glm::to_string(points.back()));
+        newPoint = PlasticPoint(cv::Point2d(frame_width - i * hDistance, i * hDistance) + distanceFromOrigin, color);
+        points.push_back(newPoint);
+        //LOG(glm::to_string(points.back()));
+        newPoint = PlasticPoint(cv::Point2d(frame_width - i * hDistance, frame_width - i * hDistance) + distanceFromOrigin, color);
+        points.push_back(newPoint);
+        //LOG(glm::to_string(points.back()));
+        newPoint = PlasticPoint(cv::Point2d(i * hDistance, frame_width - i * hDistance) + distanceFromOrigin, color);
+        points.push_back(newPoint);
+        //LOG(glm::to_string(points.back()));
+        newPoint = PlasticPoint(cv::Point2d(i * hDistance, i * hDistance + hDistance) + distanceFromOrigin, color);
+        points.push_back(newPoint);
+        //LOG(glm::to_string(points.back()));
+    }
+}
+
+void Print::createImagePoints(unsigned int layer_num)
 {
     // Move back to print origin and get current color.
 
     // We also need to take into account the Y value, but THIS IS FOR THE FUTURE.
 
-    for (int i = 0; i < layers.size(); i++)
+    for (int j = 0; j < layers[layer_num].segmentStart.size(); j++)
     {
-        for (int j = 0; j < layers[i].segmentStart.size(); j++)
-        {
-            PlasticPoint newPoint(cv::Point3d(layers[i].segmentStart[j], 0.0, 0.0), layers[i].segmentGray[j]);
-            points.push_back(newPoint);
-        }
+        PlasticPoint newPoint(cv::Point2d(layers[layer_num].segmentStart[j], 0.0), layers[layer_num].segmentGray[j]);
+        points.push_back(newPoint);
     }
 }

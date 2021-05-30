@@ -25,8 +25,8 @@ public:
     double printWidth;
     double printHeight;
 
-    cv::Point3d printOrigin;
-    cv::Point3d currentLocation;
+    cv::Point2d printOrigin;
+    cv::Point2d currentLocation;
 
     cv::Mat_<cv::Vec3b> image;
     std::vector<unsigned int> imageMatrix;
@@ -41,9 +41,9 @@ public:
 private:
     // void makePlatform(unsigned int width, unsigned int height);
     void calculateFrameWall(double frame_thickness, double frame_width);
-    void makeFrameLayer(double width, double height);
+    void makePoints(double width, double height);
     void makeImageLayer();
-    void createImagePoints();
+    void createImagePoints(unsigned int layer_num);
 };
 
 #endif

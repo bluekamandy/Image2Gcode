@@ -79,8 +79,8 @@ std::string Slicer::makeRetraction(double amount, double speed, int sign)
 std::string Slicer::centerPrint(double printWidth, double printDepth)
 {
     cv::Point2d printOrigin;
-    printOrigin.x = (bedWidth - printWidth) / 2.0f;
-    printOrigin.y = (bedDepth - printDepth) / 2.0f;
+    printOrigin.x = (bedWidth - printWidth) / 2.0;
+    printOrigin.y = (bedDepth - printDepth) / 2.0;
 
     std::stringstream result;
 
@@ -181,52 +181,36 @@ void Slicer::apply()
     stringBuffer.push_back(makeRetraction(retAmount, retSpeed, -1));
     stringBuffer.push_back(centerPrint(128.0f, 128.0f));
 
-    double currentHeight = 0;
+    double currentHeight = 0.0;
 
-    // Pillar generation
-    int gap = 3;
-    int layerNum = 0;
-    int hairNum = 0;
+    // Layers.size() is the number of layers in the 3d print.
+    // i * layerHeight should be the z position of the printer.
 
-    // for (int i = 0; i < layers.size(); i++)
-    // {
-    //     std::vector<glm::vec3> pointList = layers[i].points;
+    for (int i = 0; i < layers.size(); i++)
+    {
+        std::vector<PlasticPoint> plasticPoints = layers[i].points;
 
-    //     if (pointList.size() != 0)
-    //     {
-    //         currentHeight = pointList[0].z;
-    //         stringBuffer.push_back("G1 F300 Z" + std::to_string(currentHeight) + "\n");
-    //         stringBuffer.push_back(makeGcode(pointList[0]));
-    //         stringBuffer.push_back(makeRetraction(retAmount, retSpeed, 1));
+        if (plasticPoints.size() != 0)
+        {
+            currentHeight = i * layerHeight;
+            stringBuffer.push_back("G1 F300 Z" + std::to_string(currentHeight) + "\n");
+            stringBuffer.push_back(makeGcode(plasticPoints[0].point));
+            stringBuffer.push_back(makeRetraction(retAmount, retSpeed, 1));
 
-    //         for (int j = 0; j < pointList.size(); j++)
-    //         {
-    //             if (j == 0)
-    //             {
-    //                 stringBuffer.push_back(makeGcode(pointList[j]));
-    //                 continue;
-    //             }
-    //             // LOG(layerHeight);
+            for (int j = 0; j < plasticPoints.size(); j++)
+            {
+                if (j == 0)
+                {
+                    stringBuffer.push_back(makeGcode(plasticPoints[j].point));
+                    continue;
+                }
 
-    //             if (pointList[j].z > currentHeight + (layerHeight / 10))
-    //             {
-    //                 currentHeight = pointList[j].z;
+                stringBuffer.push_back(makeGcodeSpeed(plasticPoints[j - 1].point, plasticPoints[j].point, printSpeed));
+            }
 
-    //                 std::stringstream precisionChange;
-
-    //                 precisionChange.precision(3);
-
-    //                 precisionChange << "G1 F300 Z" << currentHeight << "\n";
-
-    //                 stringBuffer.push_back(precisionChange.str());
-    //             }
-
-    //             stringBuffer.push_back(makeGcodeSpeed(pointList[j - 1], pointList[j], printSpeed));
-    //         }
-
-    //         stringBuffer.push_back(makeRetraction(retAmount, retSpeed, -1));
-    //     }
-    // }
+            stringBuffer.push_back(makeRetraction(retAmount, retSpeed, -1));
+        }
+    }
 
     stringBuffer.push_back(makeRetraction(retAmount, retSpeed, -1));
     currentHeight += 10;

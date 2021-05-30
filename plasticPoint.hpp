@@ -10,12 +10,12 @@
 
 struct PlasticPoint
 {
-    cv::Point3d point;
+    cv::Point2d point;
     double color;
 
     PlasticPoint();
 
-    PlasticPoint(cv::Point3d point, double color);
+    PlasticPoint(cv::Point2d point, double color);
 };
 
 #endif

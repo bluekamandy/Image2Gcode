@@ -49,22 +49,22 @@ void Print::calculateFrameWall(double frame_thickness, double frame_width)
 
     for (int i = 0; i < frame_thickness; i++)
     {
-        LOG("i: " << i);
-        PlasticPoint newPoint(glm::vec3(i * hDistance, i * hDistance, 0) + distanceFromOrigin, color);
+        //LOG("i: " << i);
+        PlasticPoint newPoint(glm::vec3(i * hDistance, i * hDistance, 0.0) + distanceFromOrigin, color);
         points.push_back(newPoint);
-        LOG(glm::to_string(points.back()));
-        newPoint = PlasticPoint(glm::vec3(frame_width - i * hDistance, i * hDistance, 0) + distanceFromOrigin, color);
+        //LOG(glm::to_string(points.back()));
+        newPoint = PlasticPoint(glm::vec3(frame_width - i * hDistance, i * hDistance, 0.0) + distanceFromOrigin, color);
         points.push_back(newPoint);
-        LOG(glm::to_string(points.back()));
-        newPoint = PlasticPoint(glm::vec3(frame_width - i * hDistance, frame_width - i * hDistance, 0) + distanceFromOrigin, color);
+        //LOG(glm::to_string(points.back()));
+        newPoint = PlasticPoint(glm::vec3(frame_width - i * hDistance, frame_width - i * hDistance, 0.0) + distanceFromOrigin, color);
         points.push_back(newPoint);
-        LOG(glm::to_string(points.back()));
-        newPoint = PlasticPoint(glm::vec3(i * hDistance, frame_width - i * hDistance, 0) + distanceFromOrigin, color);
+        //LOG(glm::to_string(points.back()));
+        newPoint = PlasticPoint(glm::vec3(i * hDistance, frame_width - i * hDistance, 0.0) + distanceFromOrigin, color);
         points.push_back(newPoint);
-        LOG(glm::to_string(points.back()));
-        newPoint = PlasticPoint(glm::vec3(i * hDistance, i * hDistance + hDistance, 0) + distanceFromOrigin, color);
+        //LOG(glm::to_string(points.back()));
+        newPoint = PlasticPoint(glm::vec3(i * hDistance, i * hDistance + hDistance, 0.0) + distanceFromOrigin, color);
         points.push_back(newPoint);
-        LOG(glm::to_string(points.back()));
+        //LOG(glm::to_string(points.back()));
     }
 }
 
@@ -133,7 +133,7 @@ void Print::processImage()
 
         for (int i = 0; i < newLayer.segmentStart.size(); i++)
         {
-            LOG("segmentStart[" << i << "] = " << newLayer.segmentStart[i] << " | segmentGray[" << i << "] = " << newLayer.segmentGray[i]);
+            //LOG("segmentStart[" << i << "] = " << newLayer.segmentStart[i] << " | segmentGray[" << i << "] = " << newLayer.segmentGray[i]);
         }
     }
 
@@ -185,7 +185,16 @@ void Print::processImage()
 
 void Print::createImagePoints()
 {
-    // Move back to print origin
+    // Move back to print origin and get current color.
 
-    //points.push_back(PlasticPointprintOrigin);
+    // We also need to take into account the Y value, but THIS IS FOR THE FUTURE.
+
+    for (int i = 0; i < layers.size(); i++)
+    {
+        for (int j = 0; j < layers[i].segmentStart.size(); j++)
+        {
+            PlasticPoint newPoint(glm::vec3(layers[i].segmentStart[j], 0.0, 0.0), layers[i].segmentGray[j]);
+            points.push_back(newPoint);
+        }
+    }
 }

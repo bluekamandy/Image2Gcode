@@ -16,10 +16,7 @@
 #include <config.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc.hpp>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-#include <glm/ext.hpp>
-#include <glm/gtx/string_cast.hpp>
+#include <opencv2/core/matx.hpp>
 
 #include "slicer.hpp"
 #include "layer.hpp"
@@ -32,7 +29,7 @@ using namespace cv;
 int main()
 {
     // Slicer(float bedWidth, float bedDepth, float maxHeight, float layerHeight, int bedTemp, int nozzleTemp);
-    Slicer slicer(220.0f, 220.0f, 250.0f, 0.2f, 70.0f, 200.0f);
+    Slicer slicer(220.0, 220.0, 250.0, 0.2, 70.0, 200.0);
 
     Mat image = imread("../resources/cameraman.jpg");
 

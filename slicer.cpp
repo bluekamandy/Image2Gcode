@@ -5,7 +5,7 @@ Slicer::Slicer() : bedWidth(220.0f), bedDepth(220.0f), maxHeight(250.0f), layerH
 {
 }
 
-Slicer::Slicer(float bedWidth, float bedDepth, float maxHeight, float layerHeight, int bedTemp, int nozzleTemp) : bedWidth(bedWidth), bedDepth(bedDepth), maxHeight(maxHeight), layerHeight(layerHeight), bedTemp(bedTemp), nozzleTemp(nozzleTemp)
+Slicer::Slicer(double bedWidth, double bedDepth, double maxHeight, double layerHeight, int bedTemp, int nozzleTemp) : bedWidth(bedWidth), bedDepth(bedDepth), maxHeight(maxHeight), layerHeight(layerHeight), bedTemp(bedTemp), nozzleTemp(nozzleTemp)
 {
 }
 
@@ -57,7 +57,7 @@ void Slicer::makeGcodeStartupSettings(std::vector<std::string> &strBuff)
     strBuff.push_back(makeGcodePoints(glm::vec2(bedWidth - 10, 11), glm::vec2(10, 11)));
 }
 
-std::string Slicer::makeRetraction(float amount, float speed, int sign)
+std::string Slicer::makeRetraction(double amount, double speed, int sign)
 {
     std::string message = "";
     if (sign == -1)
@@ -76,7 +76,7 @@ std::string Slicer::makeRetraction(float amount, float speed, int sign)
     return result.str();
 }
 
-std::string Slicer::centerPrint(float printWidth, float printDepth)
+std::string Slicer::centerPrint(double printWidth, double printDepth)
 {
     glm::vec2 printOrigin;
     printOrigin.x = (bedWidth - printWidth) / 2.0f;
@@ -94,10 +94,10 @@ std::string Slicer::centerPrint(float printWidth, float printDepth)
 
 std::string Slicer::makeGcodePoints(glm::vec2 from, glm::vec2 to)
 {
-    float length = glm::distance(to, from);
-    float numerator = nozzleWidth * length * layerHeight;
-    float denominator = (1.75 / 2) * (1.75 / 2) * M_PI;
-    float e = numerator / denominator;
+    double length = glm::distance(to, from);
+    double numerator = nozzleWidth * length * layerHeight;
+    double denominator = (1.75 / 2) * (1.75 / 2) * M_PI;
+    double e = numerator / denominator;
 
     e *= extScalar;
 
@@ -108,12 +108,12 @@ std::string Slicer::makeGcodePoints(glm::vec2 from, glm::vec2 to)
     return result.str();
 }
 
-std::string Slicer::makeGcodeSpeed(glm::vec2 from, glm::vec2 to, float speed)
+std::string Slicer::makeGcodeSpeed(glm::vec2 from, glm::vec2 to, double speed)
 {
-    float length = glm::distance(to, from);
-    float numerator = nozzleWidth * length * layerHeight;
-    float denominator = (1.75 / 2) * (1.75 / 2) * M_PI;
-    float e = numerator / denominator;
+    double length = glm::distance(to, from);
+    double numerator = nozzleWidth * length * layerHeight;
+    double denominator = (1.75 / 2) * (1.75 / 2) * M_PI;
+    double e = numerator / denominator;
 
     std::stringstream result;
 
@@ -181,7 +181,7 @@ void Slicer::apply()
     stringBuffer.push_back(makeRetraction(retAmount, retSpeed, -1));
     stringBuffer.push_back(centerPrint(128.0f, 128.0f));
 
-    float currentHeight = 0;
+    double currentHeight = 0;
 
     // Pillar generation
     int gap = 3;

@@ -7,7 +7,7 @@
  * UCSB's Media Arts & Technology department..
  * 
  * Initiated: 4/27/2021
- * Last updated: 4/30/2021
+ * Last updated: 5/29/2021
  * 
  * */
 
@@ -41,7 +41,7 @@ class Slicer
 public:
     // Default constructor
     Slicer();
-    Slicer(float bedWidth, float bedDepth, float maxHeight, float layerHeight, int bedTemp, int nozzleTemp);
+    Slicer(double bedWidth, double bedDepth, double maxHeight, double layerHeight, int bedTemp, int nozzleTemp);
 
     // Any public data/members your class will need should be declared here.
     std::string output;
@@ -50,22 +50,22 @@ public:
     Print print;
     std::vector<Layer> layers;
 
-    float bedWidth;
-    float bedDepth;
-    float maxHeight;
+    double bedWidth;
+    double bedDepth;
+    double maxHeight;
 
     int bedTemp;
     int nozzleTemp;
 
-    float extScalar = 5.0f;
-    float zOffset = 0.2f;
+    double extScalar = 5.0f;
+    double zOffset = 0.2f;
 
-    float layerHeight;
-    float nozzleWidth = 0.4f;
-    float retAmount = 6.0f;
-    float retSpeed = 1200.0f;
-    float printSpeed = 500.0f;
-    float printSpeedHigh = 1000.0f;
+    double layerHeight;
+    double nozzleWidth = 0.4f;
+    double retAmount = 6.0f;
+    double retSpeed = 1200.0f;
+    double printSpeed = 500.0f;
+    double printSpeedHigh = 1000.0f;
 
     // Any methods your class needs go here.
     void apply();
@@ -76,10 +76,10 @@ private:
     void makeGcodeHeatSettings(std::vector<std::string> &strBuff);
     void makeGcodeStartupSettings(std::vector<std::string> &strBuff);
 
-    std::string makeRetraction(float amount, float speed, int sign);
-    std::string centerPrint(float printWidth, float);
+    std::string makeRetraction(double amount, double speed, int sign);
+    std::string centerPrint(double printWidth, double);
     std::string makeGcodePoints(glm::vec2 from, glm::vec2 to);
-    std::string makeGcodeSpeed(glm::vec2 from, glm::vec2 to, float speed);
+    std::string makeGcodeSpeed(glm::vec2 from, glm::vec2 to, double speed);
     std::string makeGcode(glm::vec2 to);
     std::string endGcode();
 

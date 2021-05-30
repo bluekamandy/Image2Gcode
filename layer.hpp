@@ -1,24 +1,23 @@
 #pragma once
 
 #include <vector>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
+#include <opencv2/core/matx.hpp>
 
 #ifndef _LAYER_H_
 #define _LAYER_H_
 
 struct Layer
 {
-    float length;
+    double length;
 
-    std::vector<unsigned int> segmentStart; // These are the segments of a single color.
-                                            // Imagine a line that starts at 0 and ends at length
-    std::vector<unsigned int> segmentGray;  // Each segmentStart corresponds to a gray value.
+    std::vector<double> segmentStart; // These are the segments of a single color.
+                                      // Imagine a line that starts at 0 and ends at length
+    std::vector<double> segmentGray;  // Each segmentStart corresponds to a gray value.
     std::vector<int> layerNo;
 
     Layer();
 
-    void newSegment(unsigned int start, unsigned int grayValue);
+    void newSegment(double start, double grayValue);
 };
 
 #endif

@@ -2,7 +2,7 @@
 
 Layer::Layer(){};
 
-void Layer::newSegment(unsigned int start, unsigned int grayValue)
+void Layer::newSegment(double start, double grayValue)
 {
     segmentStart.push_back(start);
     segmentGray.push_back(grayValue);

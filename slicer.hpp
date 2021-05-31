@@ -38,14 +38,13 @@ class Slicer
 public:
     // Default constructor
     Slicer();
-    Slicer(double bedWidth, double bedDepth, double maxHeight, double layerHeight, int bedTemp, int nozzleTemp);
+    Slicer(double bedWidth, double bedDepth, double maxHeight, double layerHeight, int bedTemp, int nozzleTemp, Print &print);
 
     // Any public data/members your class will need should be declared here.
     std::string output;
     std::string filePath;
 
     Print print;
-    std::vector<Layer> layers;
 
     double bedWidth;
     double bedDepth;
@@ -54,15 +53,15 @@ public:
     int bedTemp;
     int nozzleTemp;
 
-    double extScalar = 5.0f;
-    double zOffset = 0.2f;
+    double extScalar = 5.0;
+    double zOffset = 0.2;
 
     double layerHeight;
-    double nozzleWidth = 0.4f;
-    double retAmount = 6.0f;
-    double retSpeed = 1200.0f;
-    double printSpeed = 500.0f;
-    double printSpeedHigh = 1000.0f;
+    double nozzleWidth = 0.4;
+    double retAmount = 6.0;
+    double retSpeed = 1200.0;
+    double printSpeed = 500.0;
+    double printSpeedHigh = 1000.0;
 
     // Any methods your class needs go here.
     void apply();

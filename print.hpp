@@ -32,17 +32,21 @@ public:
     std::vector<unsigned int> imageMatrix;
 
     std::vector<PlasticPoint> points;
-    std::vector<int> numLayers;
 
     std::vector<Layer> layers;
 
-    void processImage();
+    void process();
+    void test();
 
 private:
-    // void makePlatform(unsigned int width, unsigned int height);
-    void calculateFrameWall(double frame_thickness, double frame_width);
-    void makePoints(double width, double height);
-    void makeImageLayer();
+    // At some point, depending on tests, it may be useful to write a platform-creation function for the plastic to be more stable.
+
+    // Called by process();
+    void processImage();
+    void makePoints();
+
+    // Called by the functions above.
+    void calculateFrameWall(unsigned int layer_num, unsigned int frame_thickness, unsigned int frame_width);
     void createImagePoints(unsigned int layer_num);
 };
 

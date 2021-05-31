@@ -31,19 +31,35 @@ using namespace cv;
 
 int main()
 {
-    // Slicer(float bedWidth, float bedDepth, float maxHeight, float layerHeight, int bedTemp, int nozzleTemp);
-    Slicer slicer(220.0, 220.0, 250.0, 0.2, 70.0, 200.0);
-
+    // Load the image. The image should be a square for now.
     Mat image = imread("../resources/cameraman.jpg");
 
+    // Resize the image to 128 x 128.
     Mat resized;
-
     resize(image, resized, cv::Size2i(128, 128), 0.0, 0.0, INTER_NEAREST);
 
+    // Create a print object.
     // Print(cv::Mat_<cv::Vec3b> image);
     Print print(resized);
 
-    print.processImage();
+    // Process the image.
+    print.process();
+    print.test();
+
+    // Slicer(float bedWidth, float bedDepth, float maxHeight, float layerHeight, int bedTemp, int nozzleTemp);
+    Slicer slicer(220.0, 220.0, 250.0, 0.2, 65.0, 210.0, print);
+
+    slicer.filePath = "../output/";
+    slicer.output = "output.gcode";
+
+    slicer.test();
+
+    slicer.apply();
+
+    cv::namedWindow("Display Image", cv::WINDOW_AUTOSIZE);
+    cv::imshow("Display Image", print.image);
+
+    cv::waitKey(0);
 
     return 0;
 }

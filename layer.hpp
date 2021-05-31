@@ -15,7 +15,6 @@ struct Layer
                                       // Imagine a line that starts at 0 and ends at length
     std::vector<double> segmentGray;  // Each segmentStart corresponds to a gray value.
     std::vector<PlasticPoint> points;
-    std::vector<unsigned int> layerNo;
 
     Layer();
 

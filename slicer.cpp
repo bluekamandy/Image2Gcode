@@ -1,11 +1,13 @@
 #include "slicer.hpp"
 
 // Constructors
-Slicer::Slicer() : bedWidth(220.0f), bedDepth(220.0f), maxHeight(250.0f), layerHeight(0.2f), bedTemp(80.0f), nozzleTemp(200.0f)
+Slicer::Slicer()
+    : bedWidth(220.0f), bedDepth(220.0f), maxHeight(250.0f), layerHeight(0.2f), bedTemp(80.0f), nozzleTemp(200.0f)
 {
 }
 
-Slicer::Slicer(double bedWidth, double bedDepth, double maxHeight, double layerHeight, int bedTemp, int nozzleTemp) : bedWidth(bedWidth), bedDepth(bedDepth), maxHeight(maxHeight), layerHeight(layerHeight), bedTemp(bedTemp), nozzleTemp(nozzleTemp)
+Slicer::Slicer(double bedWidth, double bedDepth, double maxHeight, double layerHeight, int bedTemp, int nozzleTemp, Print &print)
+    : bedWidth(bedWidth), bedDepth(bedDepth), maxHeight(maxHeight), layerHeight(layerHeight), bedTemp(bedTemp), nozzleTemp(nozzleTemp), print(print)
 {
 }
 
@@ -17,6 +19,14 @@ void Slicer::test()
     myFile << "Files can be tricky, but it is fun enough!";
 
     myFile.close();
+
+    for (int i = 0; i < print.layers.size(); i++)
+    {
+        for (int j = 0; j < print.layers[i].points.size(); j++)
+        {
+            LOG("--" << print.layers[i].points[j].point << "--");
+        }
+    }
 }
 
 // Private Methods
@@ -183,12 +193,12 @@ void Slicer::apply()
 
     double currentHeight = 0.0;
 
-    // Layers.size() is the number of layers in the 3d print.
+    // print.layers.size() is the number of print.layers in the 3d print.
     // i * layerHeight should be the z position of the printer.
 
-    for (int i = 0; i < layers.size(); i++)
+    for (int i = 0; i < print.layers.size(); i++)
     {
-        std::vector<PlasticPoint> plasticPoints = layers[i].points;
+        std::vector<PlasticPoint> plasticPoints = print.layers[i].points;
 
         if (plasticPoints.size() != 0)
         {

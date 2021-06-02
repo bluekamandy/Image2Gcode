@@ -15,11 +15,6 @@
 class Print
 {
 public:
-    // Default constructor
-    Print();
-
-    // Print(cv::Mat_<cv::Vec3b> image);
-
     Print(cv::Mat_<cv::Vec3b> image, double bedWidth, double bedDepth, double printWidth, double printDepth);
 
     double bedWidth;
@@ -42,6 +37,7 @@ public:
     void test();
 
 private:
+    Print();
     // At some point, depending on tests, it may be useful to write a platform-creation function for the plastic to be more stable.
 
     // Called by process();

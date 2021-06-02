@@ -16,4 +16,14 @@ std::string join(std::vector<std::string> stringBuffer);
 
 double distance(cv::Point2d point1, cv::Point2d point2);
 
+// Based loosely on Processing.org's map function,
+// though I've made the math a bit more clear.
+
+template <class T>
+inline T map(T value, T low1, T high1, T low2, T high2)
+{
+    float slope = (value - low1) / (high1 - low1);
+    return slope * (high2 - low2) + low2;
+}
+
 #endif

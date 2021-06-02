@@ -48,13 +48,15 @@ public:
     double bedDepth = 0.0;
     double maxHeight = 0.0;
 
-    int bedTemp;
-    int nozzleTemp;
+    int bedTemp = 0.0;
+    int nozzleTemp = 0.0;
 
-    double extScalar = 5.0;
     double zOffset = 0.2;
 
-    double layerHeight;
+    double minExtrusion = 0.5;
+    double maxExtrusion = 1.0;
+
+    double layerHeight = 0.2;
     double nozzleWidth = 0.4;
     double retAmount = 6.0;
     double retSpeed = 1200.0;
@@ -74,8 +76,9 @@ private:
 
     std::string makeRetraction(double amount, double speed, int sign);
     std::string centerPrint(double printWidth, double);
-    std::string makeGcodePoints(cv::Point2d from, cv::Point2d to);
-    std::string makeGcodeSpeed(cv::Point2d from, cv::Point2d to, double speed);
+    double calcExtrusion(double ext_multiplier, cv::Point2d to, cv::Point2d from);
+    std::string makeGcodePoints(cv::Point2d from, cv::Point2d to, unsigned int color);
+    std::string makeGcodeSpeed(cv::Point2d from, cv::Point2d to, double speed, unsigned int color);
     std::string makeGcode(cv::Point2d to);
     std::string endGcode();
 

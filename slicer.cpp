@@ -58,8 +58,8 @@ void Slicer::makeGcodeStartupSettings(std::vector<std::string> &strBuff)
     zOffsetStream << std::fixed << "G1 F300 Z" << zOffset << " ; set Z-offset\n";
     strBuff.push_back(zOffsetStream.str());
     // strBuff.push_back("G1 X50 E8 F800\n");
-    strBuff.push_back(makeGcodePoints(cv::Point2d(10, 10), cv::Point2d(bedWidth - 10, 10)));
-    strBuff.push_back(makeGcodePoints(cv::Point2d(bedWidth - 10, 11), cv::Point2d(10, 11)));
+    strBuff.push_back(makeGcodePoints(cv::Point2d(10, 10), cv::Point2d(bedWidth - 10, 10), 0));
+    strBuff.push_back(makeGcodePoints(cv::Point2d(bedWidth - 10, 11), cv::Point2d(10, 11), 0));
 }
 
 std::string Slicer::makeRetraction(double amount, double speed, int sign)
@@ -71,7 +71,7 @@ std::string Slicer::makeRetraction(double amount, double speed, int sign)
     }
     else
     {
-        message = " ; Extraction";
+        message = " ; Recover";
     }
 
     std::stringstream result;
@@ -83,9 +83,7 @@ std::string Slicer::makeRetraction(double amount, double speed, int sign)
 
 std::string Slicer::centerPrint(double printWidth, double printDepth)
 {
-    cv::Point2d printOrigin;
-    printOrigin.x = (bedWidth - printWidth) / 2.0;
-    printOrigin.y = (bedDepth - printDepth) / 2.0;
+    cv::Point2d printOrigin = print.printOrigin;
 
     std::stringstream result;
 
@@ -97,14 +95,44 @@ std::string Slicer::centerPrint(double printWidth, double printDepth)
     return result.str();
 }
 
-std::string Slicer::makeGcodePoints(cv::Point2d from, cv::Point2d to)
+double Slicer::calcExtrusion(double ext_multiplier, cv::Point2d from, cv::Point2d to)
 {
-    double length = distance(to, from);
-    double numerator = nozzleWidth * length * layerHeight;
-    double denominator = (1.75 / 2) * (1.75 / 2) * M_PI;
+    // Seems to be based on Cura.
+
+    // Understand this code with the following link:
+    // https://3dprinting.stackexchange.com/questions/6289/how-is-the-e-argument-calculated-for-a-given-g1-command
+
+    /*
+    From source:
+
+    To calculate the volume to be extruded you multiply the following parameters:
+
+    the layer height (h)
+    flow modifier (e.g. as pertectage) (SF)
+    extruder nozzle diameter (d)
+    distance of the straight line (l)
+
+    With this volume you can calculate how much filament you need to extrude. To get
+    the length (thus the length defined by the E parameter), divide the obtained volume
+    by surface area of your used filament by:
+
+    π * (filament radius)^2 or alternatively π /4 * (filament diameter)^2
+
+    */
+
+    double filamentRadius = 1.75;
+    double length = distance(from, to);
+    double numerator = nozzleWidth * length * layerHeight * ext_multiplier;
+    double denominator = (filamentRadius / 2) * (filamentRadius / 2) * M_PI;
     double e = numerator / denominator;
 
-    e *= extScalar;
+    return e;
+}
+
+std::string Slicer::makeGcodePoints(cv::Point2d from, cv::Point2d to, unsigned int color)
+{
+    double mappedExtrusionScalar = map((double)color, 0.0, 255.0, maxExtrusion, minExtrusion);
+    double e = calcExtrusion(mappedExtrusionScalar, from, to);
 
     std::stringstream result;
 
@@ -113,12 +141,10 @@ std::string Slicer::makeGcodePoints(cv::Point2d from, cv::Point2d to)
     return result.str();
 }
 
-std::string Slicer::makeGcodeSpeed(cv::Point2d from, cv::Point2d to, double speed)
+std::string Slicer::makeGcodeSpeed(cv::Point2d from, cv::Point2d to, double speed, unsigned int color)
 {
-    double length = distance(to, from);
-    double numerator = nozzleWidth * length * layerHeight;
-    double denominator = (1.75 / 2) * (1.75 / 2) * M_PI;
-    double e = numerator / denominator;
+    double mappedExtrusionScalar = map((double)color, 0.0, 255.0, maxExtrusion, minExtrusion);
+    double e = calcExtrusion(mappedExtrusionScalar, from, to);
 
     std::stringstream result;
 
@@ -133,7 +159,7 @@ std::string Slicer::makeGcode(cv::Point2d to)
 
     result.precision(2);
 
-    result << "G0 F9000 X" << to.x << " Y" << to.y << '\n';
+    result << "G0 F9000 X" << to.x << " Y" << to.y << '\n'; // A linear move with a default speed of 9000.
 
     return result.str();
 }
@@ -191,29 +217,43 @@ void Slicer::apply()
     // print.layers.size() is the number of print.layers in the 3d print.
     // i * layerHeight should be the z position of the printer.
 
-    for (int i = 0; i < print.layers.size(); i++)
+    // but if layerHeight is less than 1.0, which it always will be,
+    // then the image will be squished so we need to loop on each layer
+    // until we achieve 1.0.
+
+    for (int i = 0; i < print.layers.size(); i++) // go through each layer.
     {
-        std::vector<PlasticPoint> plasticPoints = print.layers[i].points;
-
-        if (plasticPoints.size() != 0)
+        for (int j = 0; j < (int)round(1 / layerHeight); j++) // this only really works for 0.2 so it's a hack and should be changed at some point.
+                                                              // Go through each layer 5 times to make sure the image looks correct.
+                                                              // In the future it should approximate somehow what the full image would look like
+                                                              // rather than distorting. Not sure how this would be achieved.
         {
-            currentHeight = i * layerHeight;
-            stringBuffer.push_back("G1 F300 Z" + std::to_string(currentHeight) + "\n");
-            stringBuffer.push_back(makeGcode(plasticPoints[0].point));
-            stringBuffer.push_back(makeRetraction(retAmount, retSpeed, 1));
+            std::vector<PlasticPoint> plasticPoints = print.layers[i].points;
 
-            for (int j = 0; j < plasticPoints.size(); j++)
+            if (plasticPoints.size() != 0) // As long as the layer isn't empty.
             {
-                if (j == 0)
+                currentHeight += layerHeight;                                               // Go up a layer. It starts at 0.0 and goes up from there.
+                stringBuffer.push_back("G1 F300 Z" + std::to_string(currentHeight) + "\n"); // Set the printer's height correctly.
+                stringBuffer.push_back(makeGcode(plasticPoints[0].point));                  // Start at the first point in the layer. This will be the image's left side.
+                stringBuffer.push_back(makeRetraction(retAmount, retSpeed, 1));             // Extrudes a bit of filament.
+
+                for (int j = 0; j < plasticPoints.size(); j++) // Go through all of the points on this layer.
                 {
-                    stringBuffer.push_back(makeGcode(plasticPoints[j].point));
-                    continue;
+                    if (j == 0 || plasticPoints[j].printing) // If you're at the beginning.
+                    {
+                        stringBuffer.push_back(makeGcode(plasticPoints[j].point)); // Move to that point.
+                        continue;
+                    }
+
+                    stringBuffer.push_back(makeGcodeSpeed(plasticPoints[j - 1].point, plasticPoints[j].point, printSpeed, plasticPoints[j].color));
                 }
+                std::stringstream precisionChange;
+                precisionChange.precision(3);
+                precisionChange << "G1 F300 Z" << currentHeight << "\n";
+                stringBuffer.push_back(precisionChange.str());
 
-                stringBuffer.push_back(makeGcodeSpeed(plasticPoints[j - 1].point, plasticPoints[j].point, printSpeed));
+                stringBuffer.push_back(makeRetraction(retAmount, retSpeed, -1));
             }
-
-            stringBuffer.push_back(makeRetraction(retAmount, retSpeed, -1));
         }
     }
 

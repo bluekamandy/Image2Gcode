@@ -1,20 +1,5 @@
 #include "print.hpp"
 
-// NOT ADVISED TO USE
-Print::Print()
-{
-    LOG("WARNING: DEFAULT PARAMETERS BEING USED IN PRINT OBJECT."
-        << std::endl
-        << "THIS IS NOT ADVISED. LOTS OF UNINITIALIZED STUFF.");
-}
-
-// // NOT ADVISABLE TO USE
-// Print::Print(cv::Mat_<cv::Vec3b> image)
-//     : image(image)
-// {
-//     printWidth = image.size().width;
-// }
-
 Print::Print(cv::Mat_<cv::Vec3b> image, double bedWidth, double bedDepth, double printWidth, double printDepth)
     : image(image), bedWidth(bedWidth), bedDepth(bedDepth), printWidth(printWidth), printDepth(printDepth)
 {
@@ -23,20 +8,31 @@ Print::Print(cv::Mat_<cv::Vec3b> image, double bedWidth, double bedDepth, double
     frame_width = printDepth;
 
     printOrigin = cv::Point2d(
-        (bedWidth - printWidth) / 2.0,
-        (bedDepth - printDepth) / 2.0);
+        (bedWidth - printWidth) / 2.0, /* Take width of print into account */
+        bedDepth / 2.0);               /* Exactly in the middle */
 }
 
 // PUBLIC
-
-// PRIVATE
-
-// All steps encapsulated. For more detail see below.
-
 void Print::process()
 {
     processImage();
     makePoints();
+}
+
+void Print::test()
+{
+    LOG("Printing all points");
+    LOG("layers.size() = " << layers.size());
+
+    for (int i = 0; i < layers.size(); i++)
+    {
+        LOG("layers[" << i << "].points.size() = " << layers[i].points.size());
+
+        for (int j = 0; j < layers[i].points.size(); j++)
+        {
+            LOG("X = " << layers[i].points[j].point.x << " and Y = " << layers[i].points[j].point.y);
+        }
+    }
 }
 
 // STEP 1: Process the image into a layer object with all of the values encoded and ordered properly.
@@ -65,7 +61,7 @@ void Print::processImage()
 
     //LOG(image);
 
-    cv::Mat RowClone = image.row(image.rows - 1).clone();
+    // cv::Mat RowClone = image.row(image.rows - 1).clone();
     // LOG("RowClone = " << std::endl
     //                   << " " << RowClone << std::endl
     //                   << std::endl);
@@ -75,33 +71,56 @@ void Print::processImage()
 
     std::vector<cv::Mat> orderedImageData;
 
+    // Reverse the order of the image rows.
     for (int i = 0; i < image.rows; i++)
     {
         cv::Mat rowClone = image.row(image.rows - 1 - i).clone();
 
-        LOG("Row #" << i << rowClone);
+        //LOG("Row #" << i << rowClone);
 
         orderedImageData.push_back(rowClone);
     }
 
+    // Create layers with the different color data.
+
+    // Each row contains 128 bins.
+    // Each of the bins either has 255 or 0 in them.
+    // If you're at element 0, set segmentStart to 0.0
+    // If you're not at elebemnt 0, check if the prior color was different.
+    // If the color was different than the present element, push a segment.
+    // Start a new segment.
+
     for (int y = 0; y < orderedImageData.size(); y++)
     {
         Layer newLayer;
+
         for (int x = 0; x < orderedImageData[y].cols; x++)
         {
-            cv::Mat row = orderedImageData[y];
-            if (x < 1)
+            double segmentStart;
+            double segmentEnd;
+
+            cv::Mat &row = orderedImageData[y];
+
+            if (x == 0)
             {
-                newLayer.newSegment(x, row.at<uchar>(x));
+                segmentStart = 0.0;
             }
             else
             {
                 if (row.at<uchar>(x) != row.at<uchar>(x - 1))
                 {
-                    newLayer.newSegment(x, row.at<uchar>(x));
+                    segmentEnd = x;
+                    newLayer.newSegment(segmentStart, segmentEnd, row.at<uchar>(x));
+                    segmentStart = x;
+                }
+                else if (x == orderedImageData[y].cols - 1)
+                {
+                    segmentEnd = x;
+                    newLayer.newSegment(segmentStart, segmentEnd, row.at<uchar>(x));
                 }
             }
         }
+
         layers.push_back(newLayer);
 
         for (int i = 0; i < newLayer.segmentStart.size(); i++)
@@ -117,50 +136,10 @@ void Print::processImage()
             }
         }
     }
-
-    // cv::Mat scaledDown;
-
-    // cv::resize(image, scaledDown, cv::Size_<int>(detail, detail), 0, 0, cv::INTER_LINEAR);
-
-    // cv::resize(scaledDown, image, cv::Size_<int>(width, height), 0, 0, cv::INTER_NEAREST);
-
-    /* OTHER IMAGING OPTIONS
-
-    // Harsh split of colors separately
-    for (auto &pixel : image)
-    {
-        pixel[0] = pixel[0] < mids ? pixel[0] = 0 : pixel[0] = 255;
-        pixel[1] = pixel[1] < mids ? pixel[1] = 0 : pixel[1] = 255;
-        pixel[2] = pixel[2] < mids ? pixel[2] = 0 : pixel[2] = 255;
-    }
-
-    // Produces a softer mellower color palette.
-    for (auto &pixel : image)
-    {
-        pixel[0] = (pixel[0] + pixel[1] + pixel[2]) / 3;
-        pixel[1] = (pixel[0] + pixel[1] + pixel[2]) / 3;
-        pixel[2] = (pixel[0] + pixel[1] + pixel[2]) / 3;
-    }
-
-    //Dark Black and White Version
-    for (auto &pixel : image)
-    {
-        pixel[0] = std::min({pixel[0], pixel[1], pixel[2]});
-        pixel[1] = std::min({pixel[0], pixel[1], pixel[2]});
-        pixel[2] = std::min({pixel[0], pixel[1], pixel[2]});
-    }
-
-    // Bright Black and White Version
-    for (auto &pixel : image)
-    {
-        pixel[0] = std::max({pixel[0], pixel[1], pixel[2]});
-        pixel[1] = std::max({pixel[0], pixel[1], pixel[2]});
-        pixel[2] = std::max({pixel[0], pixel[1], pixel[2]});
-    }
-    */
 }
 
 // STEP 2: Turn that processed image into a series of ordered points along with extrusion values.
+// It was suggested that we print the image first and then the posts.
 
 void Print::makePoints()
 {
@@ -172,9 +151,11 @@ void Print::makePoints()
         // If when we're printing, we find a need, we may create an interface for them.
         unsigned int frame_thickness = 5.0;
 
-        // Step 1 - Move to 0,0, which is going to be the lower left hand corner of the left frame wall.
+        // Step 1 - Create image points. The image always has to be printed first before
 
-        // Step 2 - Recalibrate print origin by setting currentLocation, which is an offset that the frame wall function takes into consideration.
+        createImagePoints(layer_num);
+
+        // Step 2 - currentLocation, which is an offset that the frame wall function takes into consideration.
 
         currentLocation = printOrigin - cv::Point2d(frame_width, frame_width / 2.0);
 
@@ -182,33 +163,35 @@ void Print::makePoints()
 
         calculateFrameWall(layer_num, frame_thickness, frame_width);
 
-        // Step 4 - Draw Image layer
-
-        createImagePoints(layer_num);
-
-        // Step 5 - Move currentLocation to the end of the print and do the other side.
+        // Step 4 - Move currentLocation to the end of the print and do the other side.
 
         currentLocation = currentLocation + cv::Point2d(frame_width + printWidth, 0.0);
 
-        // Step 6 - Create right square wall.
+        // Step 5 - Create right square wall.
+
         calculateFrameWall(layer_num, frame_thickness, frame_width);
+
+        currentLocation = printOrigin;
     }
 }
 
-void Print::test()
+void Print::createImagePoints(unsigned int layer_num)
 {
-    LOG("Printing all points");
-    LOG("layers.size() = " << layers.size());
+    //LOG("Creating image points for layer number: " << layer_num);
 
-    for (int i = 0; i < layers.size(); i++)
+    for (int i = 0; i < layers[layer_num].segmentStart.size(); i++)
     {
-        LOG("layers[" << i << "].points.size() = " << layers[i].points.size());
-
-        for (int j = 0; j < layers[i].points.size(); j++)
-        {
-            LOG("X = " << layers[i].points[j].point.x << " and Y = " << layers[i].points[j].point.y);
-        }
+        PlasticPoint newPoint = PlasticPoint(cv::Point2d(layers[layer_num].segmentStart[i], 0.0), layers[layer_num].segmentGray[i], true);
+        layers[layer_num].points.push_back(newPoint);
+        //LOG("x = " << layers[layer_num].points.back().point.x << " and y = " << layers[layer_num].points.back().point.y);
     }
+
+    // Now we need to end the segment at the end of the print.
+    PlasticPoint endPoint = PlasticPoint(
+        cv::Point2d(printWidth, 0.0),
+        layers[layer_num].segmentGray[layers[layer_num].segmentGray.size() - 1], false);
+    layers[layer_num].points.push_back(endPoint);
+    //LOG("x = " << layers[layer_num].points.back().point.x << " and y = " << layers[layer_num].points.back().point.y);
 }
 
 void Print::calculateFrameWall(unsigned int layer_num, unsigned int frame_thickness, unsigned int frame_width)
@@ -216,48 +199,29 @@ void Print::calculateFrameWall(unsigned int layer_num, unsigned int frame_thickn
     double hDistance = 0.5;
     double color = 0.0;
 
-    cv::Point2d distanceFromOrigin = printOrigin - currentLocation;
+    cv::Point2d distanceFromOrigin = currentLocation - printOrigin;
 
     for (int i = 0; i < frame_thickness; i++)
     {
         LOG("i: " << i);
-        PlasticPoint newPoint(cv::Point2d(i * hDistance, i * hDistance) + distanceFromOrigin, color);
+        PlasticPoint newPoint(cv::Point2d(i * hDistance, i * hDistance) + distanceFromOrigin, color, true);
         layers[layer_num].points.push_back(newPoint);
         LOG("x = " << layers[layer_num].points.back().point.x << " and y = " << layers[layer_num].points.back().point.y);
 
-        newPoint = PlasticPoint(cv::Point2d(frame_width - i * hDistance, i * hDistance) + distanceFromOrigin, color);
+        newPoint = PlasticPoint(cv::Point2d(frame_width - i * hDistance, i * hDistance) + distanceFromOrigin, color, true);
         layers[layer_num].points.push_back(newPoint);
         LOG("x = " << layers[layer_num].points.back().point.x << " and y = " << layers[layer_num].points.back().point.y);
 
-        newPoint = PlasticPoint(cv::Point2d(frame_width - i * hDistance, frame_width - i * hDistance) + distanceFromOrigin, color);
+        newPoint = PlasticPoint(cv::Point2d(frame_width - i * hDistance, frame_width - i * hDistance) + distanceFromOrigin, color, true);
         layers[layer_num].points.push_back(newPoint);
         LOG("x = " << layers[layer_num].points.back().point.x << " and y = " << layers[layer_num].points.back().point.y);
 
-        newPoint = PlasticPoint(cv::Point2d(i * hDistance, frame_width - i * hDistance) + distanceFromOrigin, color);
+        newPoint = PlasticPoint(cv::Point2d(i * hDistance, frame_width - i * hDistance) + distanceFromOrigin, color, true);
         layers[layer_num].points.push_back(newPoint);
         LOG("x = " << layers[layer_num].points.back().point.x << " and y = " << layers[layer_num].points.back().point.y);
 
-        newPoint = PlasticPoint(cv::Point2d(i * hDistance, i * hDistance + hDistance) + distanceFromOrigin, color);
-        layers[layer_num].points.push_back(newPoint);
-        LOG("x = " << layers[layer_num].points.back().point.x << " and y = " << layers[layer_num].points.back().point.y);
-    }
-}
-
-void Print::createImagePoints(unsigned int layer_num)
-{
-    LOG("Creating image points for layer number: " << layer_num);
-
-    for (int i = 0; i < layers[layer_num].segmentStart.size(); i++)
-    {
-        PlasticPoint newPoint = PlasticPoint(cv::Point2d(layers[layer_num].segmentStart[i], 0.0), layers[layer_num].segmentGray[i]);
+        newPoint = PlasticPoint(cv::Point2d(i * hDistance, i * hDistance + hDistance) + distanceFromOrigin, color, false);
         layers[layer_num].points.push_back(newPoint);
         LOG("x = " << layers[layer_num].points.back().point.x << " and y = " << layers[layer_num].points.back().point.y);
     }
-
-    // Now we need to end the segment at the end of the print.
-    PlasticPoint endPoint = PlasticPoint(
-        cv::Point2d(printWidth, 0.0),
-        layers[layer_num].segmentGray[layers[layer_num].segmentGray.size() - 1]);
-    layers[layer_num].points.push_back(endPoint);
-    LOG("x = " << layers[layer_num].points.back().point.x << " and y = " << layers[layer_num].points.back().point.y);
 }

@@ -1,7 +1,7 @@
 /*
  * IMAGE to GCODE
  *
- * by MASOOD
+ * by MASOOD KAMANDY
  * 
  * Initiated: 4/27/2021
  * Last updated: 5/30/2021
@@ -38,16 +38,25 @@ int main()
     Mat resized;
     resize(image, resized, cv::Size2i(128, 128), 0.0, 0.0, INTER_NEAREST);
 
-    // Create a print object.
-    // Print(cv::Mat_<cv::Vec3b> image);
-    Print print(resized);
+    double bedWidth = 220.0;
+    double bedDepth = 220.0;
+    double printWidth = resized.size().width;
+    double printDepth = 10.0;
+    double maxHeight = 250.0;
+    double layerHeight = 0.2;
+    double bedTemp = 65.0;
+    double nozzleTemp = 210.0;
+
+    // Print::Print(cv::Mat_<cv::Vec3b> image, double bedWidth, double bedDepth, double printWidth, double printDepth)
+    // : image(image), bedWidth(bedWidth), bedDepth(bedDepth), printWidth(printWidth), printDepth(printDepth)
+    Print print(resized, bedWidth, bedDepth, printWidth, printDepth);
 
     // Process the image.
     print.process();
     print.test();
 
     // Slicer(float bedWidth, float bedDepth, float maxHeight, float layerHeight, int bedTemp, int nozzleTemp);
-    Slicer slicer(220.0, 220.0, 250.0, 0.2, 65.0, 210.0, print);
+    Slicer slicer(bedWidth, bedDepth, maxHeight, layerHeight, bedTemp, nozzleTemp, print);
 
     slicer.filePath = "../output/";
     slicer.output = "output.gcode";

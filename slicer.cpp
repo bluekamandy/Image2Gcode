@@ -1,12 +1,7 @@
 #include "slicer.hpp"
 
 // Constructors
-Slicer::Slicer()
-    : bedWidth(220.0f), bedDepth(220.0f), maxHeight(250.0f), layerHeight(0.2f), bedTemp(80.0f), nozzleTemp(200.0f)
-{
-}
-
-Slicer::Slicer(double bedWidth, double bedDepth, double maxHeight, double layerHeight, int bedTemp, int nozzleTemp, Print &print)
+Slicer::Slicer(double bedWidth, double bedDepth, double maxHeight, double layerHeight, double bedTemp, double nozzleTemp, Print &print)
     : bedWidth(bedWidth), bedDepth(bedDepth), maxHeight(maxHeight), layerHeight(layerHeight), bedTemp(bedTemp), nozzleTemp(nozzleTemp), print(print)
 {
 }

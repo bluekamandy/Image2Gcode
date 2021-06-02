@@ -36,9 +36,7 @@
 class Slicer
 {
 public:
-    // Default constructor
-    Slicer();
-    Slicer(double bedWidth, double bedDepth, double maxHeight, double layerHeight, int bedTemp, int nozzleTemp, Print &print);
+    Slicer(double bedWidth, double bedDepth, double maxHeight, double layerHeight, double bedTemp, double nozzleTemp, Print &print);
 
     // Any public data/members your class will need should be declared here.
     std::string output;
@@ -46,9 +44,9 @@ public:
 
     Print print;
 
-    double bedWidth;
-    double bedDepth;
-    double maxHeight;
+    double bedWidth = 0.0;
+    double bedDepth = 0.0;
+    double maxHeight = 0.0;
 
     int bedTemp;
     int nozzleTemp;
@@ -68,6 +66,8 @@ public:
     void test();
 
 private:
+    Slicer();
+
     void makeGcodeInfo(std::vector<std::string> &strBuff);
     void makeGcodeHeatSettings(std::vector<std::string> &strBuff);
     void makeGcodeStartupSettings(std::vector<std::string> &strBuff);

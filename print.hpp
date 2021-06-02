@@ -18,12 +18,15 @@ public:
     // Default constructor
     Print();
 
-    Print(cv::Mat_<cv::Vec3b> image);
+    // Print(cv::Mat_<cv::Vec3b> image);
+
+    Print(cv::Mat_<cv::Vec3b> image, double bedWidth, double bedDepth, double printWidth, double printDepth);
 
     double bedWidth;
-    double bedHeight;
+    double bedDepth;
     double printWidth;
-    double printHeight;
+    double printDepth;
+    unsigned int frame_width;
 
     cv::Point2d printOrigin;
     cv::Point2d currentLocation;

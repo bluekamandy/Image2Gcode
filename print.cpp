@@ -1,16 +1,30 @@
 #include "print.hpp"
 
+// NOT ADVISED TO USE
 Print::Print()
-    : bedWidth(220.0), bedHeight(220.0), printWidth(128.0), printHeight(128.0)
 {
+    LOG("WARNING: DEFAULT PARAMETERS BEING USED IN PRINT OBJECT."
+        << std::endl
+        << "THIS IS NOT ADVISED. LOTS OF UNINITIALIZED STUFF.");
+}
+
+// // NOT ADVISABLE TO USE
+// Print::Print(cv::Mat_<cv::Vec3b> image)
+//     : image(image)
+// {
+//     printWidth = image.size().width;
+// }
+
+Print::Print(cv::Mat_<cv::Vec3b> image, double bedWidth, double bedDepth, double printWidth, double printDepth)
+    : image(image), bedWidth(bedWidth), bedDepth(bedDepth), printWidth(printWidth), printDepth(printDepth)
+{
+    printWidth = image.size().width;
+
+    frame_width = printDepth;
+
     printOrigin = cv::Point2d(
         (bedWidth - printWidth) / 2.0,
-        (bedHeight - printHeight) / 2.0);
-};
-
-Print::Print(cv::Mat_<cv::Vec3b> image)
-    : image(image), bedWidth(220.0), bedHeight(220.0), printWidth(128.0), printHeight(128.0)
-{
+        (bedDepth - printDepth) / 2.0);
 }
 
 // PUBLIC
@@ -157,7 +171,6 @@ void Print::makePoints()
         // These are hard coded for now.
         // If when we're printing, we find a need, we may create an interface for them.
         unsigned int frame_thickness = 5.0;
-        unsigned int frame_width = 10.0;
 
         // Step 1 - Move to 0,0, which is going to be the lower left hand corner of the left frame wall.
 

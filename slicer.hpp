@@ -53,14 +53,14 @@ public:
 
     double zOffset = 0.2;
 
-    double minExtrusion = 0.5;
+    double minExtrusion = 0.2;
     double maxExtrusion = 1.0;
 
-    double layerHeight = 0.2;
+    double layerHeight = 0.33;
     double nozzleWidth = 0.4;
     double retAmount = 6.0;
     double retSpeed = 1200.0;
-    double printSpeed = 500.0;
+    double printSpeed = 250.0;
     double printSpeedHigh = 1000.0;
 
     // Any methods your class needs go here.

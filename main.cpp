@@ -4,10 +4,7 @@
  * by MASOOD KAMANDY
  * 
  * Initiated: 4/27/2021
- * Last updated: 5/30/2021
- * 
- * Note: Possible submisison to SCF:
- * https://scf.acm.org/2021/submissions.html
+ * Last updated: 6/2/2021
  * 
  * */
 
@@ -34,16 +31,32 @@ int main()
     // Load the image. The image should be a square for now.
     Mat image = imread("../resources/cameraman.jpg");
 
+    // Mat image = imread("../resources/cameraman.jpg", IMREAD_GRAYSCALE);
+    // Mat thresh_image;
+
+    // double thresh = 0;
+    // double maxValue = 255;
+
+    // threshold(image, thresh_image, thresh, maxValue, THRESH_BINARY);
+
+    Mat thresh_image;
+
+    double thresh = 127;
+    double maxValue = 255;
+
+    threshold(image, thresh_image, thresh, maxValue, THRESH_BINARY);
+
     // Resize the image to 128 x 128.
     Mat resized;
-    resize(image, resized, cv::Size2i(128, 128), 0.0, 0.0, INTER_NEAREST);
+    resize(thresh_image, resized, cv::Size(), 0.5, 0.5, INTER_NEAREST);
+    // resize(thresh_image, resized, cv::Size2i(128, 128), 0.0, 0.0, INTER_NEAREST);
 
     double bedWidth = 220.0;
     double bedDepth = 220.0;
     double printWidth = resized.size().width;
     double printDepth = 10.0;
     double maxHeight = 250.0;
-    double layerHeight = 0.2;
+    double layerHeight = 0.33;
     double bedTemp = 65.0;
     double nozzleTemp = 210.0;
 
@@ -65,10 +78,16 @@ int main()
 
     slicer.apply();
 
+    LOG("DISTANCE TEST IS: " << distance(cv::Point2d(0, 0), cv::Point2d(23, 40)));
+
+    LOG("Image has: " << print.image.rows << " rows and " << print.image.cols << " columns.");
+
     cv::namedWindow("Display Image", cv::WINDOW_AUTOSIZE);
     cv::imshow("Display Image", print.image);
 
     cv::waitKey(0);
+
+    //double distance(cv::Point2d point1, cv::Point2d point2)
 
     return 0;
 }

@@ -27,7 +27,7 @@ public:
     cv::Point2d currentLocation;
 
     cv::Mat_<cv::Vec3b> image;
-    std::vector<unsigned int> imageMatrix;
+    cv::Mat_<cv::Vec3b> flipped;
 
     std::vector<PlasticPoint> points;
 
@@ -46,7 +46,7 @@ private:
 
     // Called by the functions above.
     void calculateFrameWall(unsigned int layer_num, unsigned int frame_thickness, unsigned int frame_width);
-    void createImagePoints(unsigned int layer_num);
+    void createImageMatrixPoints(unsigned int layer_num);
 };
 
 #endif

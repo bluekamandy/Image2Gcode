@@ -131,7 +131,7 @@ double Slicer::calcExtrusion(double ext_multiplier, cv::Point2d from, cv::Point2
 
 std::string Slicer::makeGcodePoints(cv::Point2d from, cv::Point2d to, unsigned int color)
 {
-    double mappedExtrusionScalar = map((double)color, 0.0, 255.0, maxExtrusion, minExtrusion);
+    double mappedExtrusionScalar = map((double)color, 0.0, 255.0, minExtrusion, maxExtrusion);
     double e = calcExtrusion(mappedExtrusionScalar, from, to);
 
     std::stringstream result;
@@ -159,7 +159,7 @@ std::string Slicer::makeGcode(cv::Point2d to)
 
     result.precision(2);
 
-    result << "G0 F9000 X" << to.x << " Y" << to.y << '\n'; // A linear move with a default speed of 9000.
+    result << std::fixed << "G0 F9000 X" << to.x << " Y" << to.y << '\n'; // A linear move with a default speed of 9000.
 
     return result.str();
 }
@@ -226,7 +226,7 @@ void Slicer::apply()
         for (int j = 0; j < (int)round(1 / layerHeight); j++) // this only really works for 0.2 so it's a hack and should be changed at some point.
                                                               // Go through each layer 5 times to make sure the image looks correct.
                                                               // In the future it should approximate somehow what the full image would look like
-                                                              // rather than distorting. Not sure how this would be achieved.
+                                                              // rather than distorting. Not sure how this would be achieved with a for loop though.
         {
             std::vector<PlasticPoint> plasticPoints = print.layers[i].points;
 
@@ -239,7 +239,12 @@ void Slicer::apply()
 
                 for (int j = 0; j < plasticPoints.size(); j++) // Go through all of the points on this layer.
                 {
-                    if (j == 0 || plasticPoints[j].printing) // If you're at the beginning.
+                    if (j == 0 && plasticPoints[j].printing) // If you're at the beginning.
+                    {
+                        stringBuffer.push_back(makeGcode(plasticPoints[j].point)); // Move to that point.
+                        continue;
+                    }
+                    else if (plasticPoints[j].printing == false)
                     {
                         stringBuffer.push_back(makeGcode(plasticPoints[j].point)); // Move to that point.
                         continue;

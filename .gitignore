@@ -1,6 +1,7 @@
 # macOS
 .vscode/
 .DS_Store
+tasklist.txt
 
 # C++ Standard
 # Source: https://github.com/github/gitignore/blob/master/C%2B%2B.gitignore

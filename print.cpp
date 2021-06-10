@@ -225,8 +225,8 @@ void Print::createImageMatrixPoints(unsigned int layer_num)
     PlasticPoint newPoint(cv::Point2d(0.0, 0.0), 0.0, false);
     layers[layer_num].points.push_back(newPoint);
 
-    for (int i = 0; i < flipped.cols; i += 2) // Go through each pixel in the row.
-                                              // By changing the increment, you can make the secquences between the warps longer.
+    for (int i = 0; i < flipped.cols; i++) // Go through each pixel in the row.
+                                           // By changing the increment, you can make the secquences between the warps longer. It doesn't work well enough to make a difference in the actual print though, so I think restructuring the actual warp/weft structure would be good. Maybe average a set number of pixels?
     {
         LOG("INSIDE FOR LOOP: " << i);
         for (int j = 0; j < 3; j++) // There are 3 segments per pixel.

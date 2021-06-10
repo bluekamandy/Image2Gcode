@@ -1,0 +1,7 @@
+Task List
+
+Create website.
+Transfer content from slide show to website.
+Convert website to README
+Add a Mozilla license.
+Sample fewer pixels.

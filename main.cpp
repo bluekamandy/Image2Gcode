@@ -4,7 +4,7 @@
  * by MASOOD KAMANDY
  * 
  * Initiated: 4/27/2021
- * Last updated: 6/2/2021
+ * Last updated: 6/10/2021
  * 
  * */
 
@@ -29,7 +29,7 @@ using namespace cv;
 int main()
 {
     // Load the image. The image should be a square for now.
-    Mat image = imread("../resources/cameraman.jpg");
+    Mat image = imread("../resources/harvey_milk.jpg");
 
     // Mat image = imread("../resources/cameraman.jpg", IMREAD_GRAYSCALE);
     // Mat thresh_image;
@@ -48,7 +48,7 @@ int main()
 
     // Resize the image to 128 x 128.
     Mat resized;
-    resize(thresh_image, resized, cv::Size(), 0.5, 0.5, INTER_NEAREST);
+    resize(thresh_image, resized, cv::Size(128, 128), 0.0, 0.0, INTER_NEAREST);
     // resize(thresh_image, resized, cv::Size2i(128, 128), 0.0, 0.0, INTER_NEAREST);
 
     double bedWidth = 220.0;

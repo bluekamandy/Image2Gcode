@@ -29,12 +29,12 @@ Table of Contents
 
 [Technologies Explored](#technolgies-explored)
 
--   [GCode Parsing](#gcode)
+-   [GCode Parsing](#gcode-parsing)
 -   [OpenCV](#opencv)
 
-[Structure of Software](#structure)
+[Structure of Software](#structure-of-software)
 
-[Turning Pixels into Plastic](#pixels-to-plastic)
+[Turning Pixels into Plastic](#turning-pixels-into-plastic)
 
 [Essential Resources](#essential-resources)
 
@@ -50,9 +50,9 @@ Table of Contents
 
 [Future Work](#future-work)
 
--   [A New Warp/Weft Pattern](#new-warp-weft)
+-   [A New Warp Weft Pattern](#a-new-warp-weft-pattern)
 -   [Test Images](#test-images)
--   [Graphing the Extrusion Equation](#graphing)
+-   [Graphing the Extrusion Equation](#graphing-the-extrusion-equation)
 
 [Libraries](#libraries)
 
@@ -82,7 +82,7 @@ There were several technologies that were key to my project that I
 explored on top of the core topics we learned in class for my final
 project.
 
-#### Gcode
+#### Gcode Parsing
 
 The most crucial technology and the core of this project was a Gcode
 parser that was given to us by Prof. Jacobs which was originally writen
@@ -417,7 +417,7 @@ of this codebase. The biggest takeaway from the project was getting
 hands-on experience with how minute and precise control of a 3D FDM
 printer can be with a customized Gcode parser.
 
-#### A New Warp/Weft Pattern
+#### A New Warp Weft Pattern
 
 It became clear to me when I produced the *horsehair* that the idea of a
 warp and weft of equal size was probably not going to result in a

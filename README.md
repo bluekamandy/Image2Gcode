@@ -191,7 +191,7 @@ of software effectively:
     the printer. The only drawback to this system is that it does not
     visualize extrusion rates.
 
-Turning Pixels into Plastic {# pixels-to-plastic}
+Turning Pixels into Plastic
 ---------------------------
 
 From the outset, the goal of this project was to print a 128 pixel-wide
@@ -417,7 +417,7 @@ of this codebase. The biggest takeaway from the project was getting
 hands-on experience with how minute and precise control of a 3D FDM
 printer can be with a customized Gcode parser.
 
-#### A New Warp/Weft Pattern {#new-warp-weft}
+#### A New Warp/Weft Pattern
 
 It became clear to me when I produced the *horsehair* that the idea of a
 warp and weft of equal size was probably not going to result in a
@@ -452,7 +452,7 @@ tall.](resources/test_image_grid.jpg)
 ![An image of a black strip with 8 white squares centered and evenly
 distributed along the strip.](resources/test_image_holes.jpg)
 
-#### Graphing the Extrusion Equation {#graphing}
+#### Graphing the Extrusion Equation
 
 In this process it became clear that I didn't understand the equation as
 well as I should and that extruding the right amount or using the right

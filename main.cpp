@@ -79,7 +79,5 @@ int main()
 
     cv::waitKey(0);
 
-    //double distance(cv::Point2d point1, cv::Point2d point2)
-
     return 0;
 }

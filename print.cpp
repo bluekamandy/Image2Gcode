@@ -88,68 +88,6 @@ void Print::processImage()
         Layer newLayer;
         layers.push_back(newLayer);
     }
-
-    // // Create layers with the different color data.
-
-    // // Each row contains 128 bins.
-    // // Each of the bins either has 255 or 0 in them.
-    // // If you're at element 0, set segmentStart to 0.0
-    // // If you're not at elebemnt 0, check if the prior color was different.
-    // // If the color was different than the present element, push a segment.
-    // // Start a new segment.
-
-    // for (int y = 0; y < orderedImageData.size(); y++) // For all rows of data.
-    // {
-    //     Layer newLayer; // Create a new layer. Layers have segmentStart, segmentEnd, color.
-
-    //     for (int x = 0; x < orderedImageData[y].cols; x++) // For all the columns in each row...
-    //     {
-    //         double segmentStart; // We're going to have a segmentStart x.
-    //         double segmentEnd;   // We're going to have a segmentEnd x.
-
-    //         cv::Mat &row = orderedImageData[y]; // To make it less verbose.
-
-    //         if (x == 0)
-    //         {
-    //             segmentStart = 0.0; // If we're at the beginning of the row, set segmentStart to 0.0;
-    //         }
-    //         else
-    //         {
-    //             if (row.at<uchar>(x) != row.at<uchar>(x - 1)) // If the current element is DIFFERENT from the prior.
-    //             {
-    //                 segmentEnd = x;
-    //                 newLayer.newSegment(segmentStart, segmentEnd, row.at<uchar>(x)); // Push a new segment.
-    //                 segmentStart = x;                                                // Start a new segment.
-    //             }
-    //             else if (x == orderedImageData[y].cols - 1) // If the current element is the SAME as the prior.
-    //             {
-    //                 segmentEnd = x;
-    //                 newLayer.newSegment(segmentStart, segmentEnd, row.at<uchar>(x));
-
-    //                 // Do nothing. Move on and wait till there's a difference.
-    //             }
-    //         }
-    //     }
-
-    //     layers.push_back(newLayer);
-
-    //     for (int i = 0; i < newLayer.segmentStart.size(); i++)
-    //     {
-    //         LOG("segmentStart[" << i << "] = " << newLayer.segmentStart[i] << " | segmentGray[" << i << "] = " << newLayer.segmentGray[i]);
-    //     }
-
-    //     for (int i = 0; i < layers.size(); i++)
-    //     {
-    //         for (int j = 0; j < layers[i].segmentStart.size(); j++)
-    //         {
-    //             LOG("layer[" << i << "].segmentStart[" << j << "] = " << layers[i].segmentStart[j] << " | layer[" << i << "].segmentGray[" << j << "] = " << layers[i].segmentGray[j]);
-    //         }
-    //     }
-    // }
-
-    // LET'S TRY THIS AGAIN
-
-    // This time we're
 }
 
 // STEP 2: Turn that processed image into a series of ordered points along with extrusion values.
@@ -191,22 +129,6 @@ void Print::makePoints()
 
 void Print::createImageMatrixPoints(unsigned int layer_num)
 {
-    // //LOG("Creating image points for layer number: " << layer_num);
-
-    // for (int i = 0; i < layers[layer_num].segmentStart.size(); i++)
-    // {
-    //     PlasticPoint newPoint = PlasticPoint(cv::Point2d(layers[layer_num].segmentStart[i], 0.0), layers[layer_num].segmentGray[i], true);
-    //     layers[layer_num].points.push_back(newPoint);
-    //     //LOG("x = " << layers[layer_num].points.back().point.x << " and y = " << layers[layer_num].points.back().point.y);
-    // }
-
-    // // Now we need to end the segment at the end of the print.
-    // PlasticPoint endPoint = PlasticPoint(
-    //     cv::Point2d(printWidth, 0.0),
-    //     layers[layer_num].segmentGray[layers[layer_num].segmentGray.size() - 1], false);
-    // layers[layer_num].points.push_back(endPoint);
-    // //LOG("x = " << layers[layer_num].points.back().point.x << " and y = " << layers[layer_num].points.back().point.y);
-
     // In 3D printing, pixels are not discrete objects. Realizing this was a breakthrough idea for me.
     // We stretch a single pixel over space. This means there is a scaffold that holds the image.
     // Here are 3 pixels in 3D printing space:

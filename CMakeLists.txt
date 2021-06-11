@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(IMGtoGCODE VERSION 1.0)
+project(Image2Gcode VERSION 1.0)
 
 # Enforce use of C++14
 set(CMAKE_CXX_STANDARD_REQUIRED 20)

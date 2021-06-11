@@ -1,7 +1,7 @@
 Image2Gcode:
 ============
 
-#### A system for printing 2D images using 3D FDMprinting and variable extrusion levels. {#subtitle}
+#### A system for printing 2D images using 3D FDMprinting and variable extrusion levels.
 
 ![An image of a simulated 3D print of an image of a camera
 man.](website/images/cameraman_simulation.png)
@@ -136,7 +136,7 @@ clarity:
     G1 F1200 E6.00000000 ; Recover
     [...]
 
-#### OpenCV {# opencv}
+#### OpenCV
 
 The goal of using and learning OpenCV was more of a pragmatic one. While
 it's overpowered for my current use case, learning how to use it affords
@@ -156,7 +156,7 @@ documentation is compehensive:
     on a single side. One could take an entire course on OpenCV and only
     begin to be familiar with its intricacies.
 
-Structure of Software {#structure}
+Structure of Software
 ---------------------
 
 ![A diagram showing the main classes of the software: an OpenCV image, a

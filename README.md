@@ -226,7 +226,7 @@ In weaving the warp and weft are what give a textile its strength. The
 *warp* is the vertical thread element and the *weft* is the horizontal
 element. They are both interwoven. The same metaphor can be applied to
 3D printing and this metaphor has been used in multiple projects in the
-past [cite defeXtiles and 3d printed fabric papers].
+past [1, 2].
 
 The warp and weft metaphor gives us a way of translating discrete pixels
 into 3D printed space. The image below is the key to understanding this
@@ -531,7 +531,7 @@ this investigation.
 License
 -------
 
-This project is available to license under a Mozilla Copyleft license.
+This project is available to license under a Mozilla copyleft license.
 Please see the license file for more information.
 
 References
@@ -543,10 +543,11 @@ References
     User Interface Software and Technology. Association for Computing
     Machinery, New York, NY, USA, 1222–1233.
     DOI:https://doi.org/10.1145/3379337.3415876
-2.  OpenCV C++ Documentation. OpenCV. (n.d.).
+2.  Takahashi, H., & Kim, J. (2019). 3D Printed Fabric. *Proceedings of the 32nd Annual ACM Symposium on User Interface Software and Technology*. https://doi.org/10.1145/3332165.3347896 
+3.  OpenCV C++ Documentation. OpenCV. (n.d.).
     [https://docs.opencv.org/master/d1/dfb/intro.html](https://docs.opencv.org/master/d1/dfb/intro.html).
-3.  MarlinFirmware. (2021, June 4). Gcode. Marlin Firmware.
+4.  MarlinFirmware. (2021, June 4). Gcode. Marlin Firmware.
     [https://marlinfw.org/meta/gcode/](https://marlinfw.org/meta/gcode/).
 
-© Copyright 2021 Masood Kamandy. All rights reserved. Last Updated June
-10, 2021.
+© Copyright 2021 Masood Kamandy. All rights reserved.
+Last Updated June 10, 2021.

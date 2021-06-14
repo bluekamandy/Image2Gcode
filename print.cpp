@@ -129,7 +129,7 @@ void Print::makePoints()
 
 void Print::createImageMatrixPoints(unsigned int layer_num)
 {
-    // In 3D printing, pixels are not discrete objects. Realizing this was a breakthrough idea for me.
+    // In 3D printing, pixels are not discrete objects. Realizing this was an important shift for me.
     // We stretch a single pixel over space. This means there is a scaffold that holds the image.
     // Here are 3 pixels in 3D printing space:
     // |>-<|>-<|>-<|
@@ -138,33 +138,46 @@ void Print::createImageMatrixPoints(unsigned int layer_num)
     // - The SECOND segment - has a mapped extrusion value that under-extrudes depending on the color value of the pixel.
     // - The THIRD segement is a WARP <| is another segement that has an extrusion value of 1.0 to "hold" the image and secure the layers of print.
 
+    // NOTE: Maybe a better visualization is =---= =---= =---= =---= =---= =---= =---=, where each set of =-= has a single "pixel" that is surrounded by a warp.
+
+    // If the tolerance is 0 -> =-=
+
     // First let's create all of the points for the entire image.
 
     // We'll use a weaving metaphor.
+    // NOTE: pixel + 0.2 is the warp
+    // i + 0.2 + 0.6 is the weft
+    // and then the warp is what's left over (i + 0.2 + 0.6 + 0.2)
     double warp = 0.2;
     double weft = 0.6;
 
     PlasticPoint newPoint(cv::Point2d(0.0, 0.0), 0.0, false);
     layers[layer_num].points.push_back(newPoint);
 
-    for (int i = 0; i < flipped.cols; i++) // Go through each pixel in the row.
-                                           // By changing the increment, you can make the secquences between the warps longer. It doesn't work well enough to make a difference in the actual print though, so I think restructuring the actual warp/weft structure would be good. Maybe average a set number of pixels?
+    for (int pixel = 0; pixel < flipped.cols; pixel++) // Go through each pixel in the row.
+                                                       // By changing the increment, you can make the secquences between the warps longer. It doesn't work well enough to make a difference in the actual print though, so I think restructuring the actual warp/weft structure below is a better strategy. Maybe average a set number of pixels?
     {
-        LOG("INSIDE FOR LOOP: " << i);
-        for (int j = 0; j < 3; j++) // There are 3 segments per pixel.
+        LOG("INSIDE FOR LOOP: " << pixel);
+
+        for (int pixel_segment = 0; pixel_segment < 3; pixel_segment++) // There are 3 segments per pixel.
         {
-            switch (j)
+            switch (pixel_segment)
             {
-            case 0:
+            case WARP_LEFT: // WARP (create an enum)
+                // Reminder: PlasticPoint(cv::Point2d point, double color, bool printing);
+                // 255 is WHITE is mapped to full extrusion.
                 newPoint = PlasticPoint(cv::Point2d(i, 0.0), 255, true);
-                LOG("WARP - Point: (" << i << ", 0.0) Color: " << 255);
+                LOG("WARP - Point: (" << pixel << ", 0.0) Color: " << 255);
                 break;
-            case 1:
-                // code block orderedImageData[layer_num].at<uchar>(i)
-                newPoint = PlasticPoint(cv::Point2d(i + warp, 0.0), (double)flipped.at<uchar>(layer_num, i * 3), true);
-                LOG("WEFT - Point: (" << i + warp << ", 0.0) Color: " << (double)flipped.at<uchar>(layer_num, i * 3));
+            case WEFT: // WEFT (Tolerance on either side? )
+                // Wishful thinking.
+                createImageSegment(image, tolerance, x, y);
+                // Here we are just pitting the ACTUAL GRAY VALUE as color
+                newPoint = PlasticPoint(cv::Point2d(pixel + warp, 0.0), (double)flipped.at<uchar>(layer_num, pixel * 3), true);
+                LOG("WEFT - Point: (" << pixel + warp << ", 0.0) Color: " << (double)flipped.at<uchar>(layer_num, i * 3));
                 break;
-            case 2:
+            case WARP_RIGHT: // WARP
+                // 255 is WHITE is mapped to full extrusion.
                 newPoint = PlasticPoint(cv::Point2d(i + warp + weft, 0.0), 255, true);
                 LOG("WARP - Point: (" << i << ", 0.0) Color: " << 255);
                 break;

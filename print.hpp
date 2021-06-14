@@ -12,6 +12,10 @@
 #ifndef _PRINT_H_
 #define _PRINT_H_
 
+#define WARP_LEFT 0
+#define WEFT 1
+#define WARP_RIGHT 2
+
 class Print
 {
 public:
